@@ -21,6 +21,8 @@ class AuctionEnv(gym.Env):
         self.action_space = spaces.Discrete(36)
         self.order = 0 #indeks dealera
         self.obs = []
+        #Utworzenie dostępnych kontraktów
+        self.available_contracts = self.create_avaliable_contracts()
 
         print('init')
 
@@ -48,4 +50,12 @@ class AuctionEnv(gym.Env):
     def hand_display(self, hand, display):
         for i in range(0, 4):
             display[i].setText(hand[i])
+
+    def create_avaliable_contracts(self):
+        suits = ['C', 'D', 'H', 'S', 'NT']
+        numbers = [1, 2, 3, 4, 5, 6, 7]
+        contracts = [Contract('pass', None)]
+        contracts.extend([Contract(i, j) for j in numbers for i in suits])
+
+        return contracts
 

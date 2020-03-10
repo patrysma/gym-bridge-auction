@@ -10,15 +10,25 @@ club = "\u2663"
 # Players names
 NAMES = ['N', 'E', 'S', 'W']
 
-#Type of contracts
-CONTRACTS = {}
-
 
 class Contract:
 
     def __init__(self, suit, number):
         self.suit = suit
         self.number = number
+        self.value = None
+
+    def set_value(self, value):
+        self.value = value
+
+    def get(self):
+        return self.number, self.suit
+
+    def __str__(self):
+        if self.number is None:
+            return self.suit
+        else:
+            return str(self.number)+self.suit
 
 
 class Card:
