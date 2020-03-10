@@ -1,9 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QGridLayout, QLineEdit
-from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QColor
-from PyQt5.QtCore import Qt
-from PyQt5 import QtCore
 from gym_bridge_auction.envs.game import *
 
 
@@ -28,24 +25,29 @@ class Window(QWidget):
     def interface(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setFixedSize(self.width, self.height)
 
         # ustawienie koloru tła
         self.setAutoFillBackground(True)
         p = self.palette()
-        p.setColor(self.backgroundRole(), QColor(0, 100, 0))
+        p.setColor(self.backgroundRole(), QColor(60, 120, 70))
         self.setPalette(p)
 
         # etykiety dla poszczególnych graczy
         north_player_label = QLabel(NAMES[0], self)
+        north_player_label.setStyleSheet('color: aqua')
         north_colour_labels = self.create_labels()
 
         east_player_label = QLabel(NAMES[1], self)
+        east_player_label.setStyleSheet('color: aqua')
         east_colour_labels = self.create_labels()
 
         south_player_label = QLabel(NAMES[2], self)
+        south_player_label.setStyleSheet('color: aqua')
         south_colour_labels = self.create_labels()
 
         west_player_label = QLabel(NAMES[3], self)
+        west_player_label.setStyleSheet('color: aqua')
         west_colour_labels = self.create_labels()
 
         # etykiety licytacji i wyników
@@ -113,16 +115,18 @@ class Window(QWidget):
         main_grid_layout.addLayout(contract_layout, 0, 0)
         main_grid_layout.addLayout(result_layout, 0, 2)
         self.setLayout(main_grid_layout)
-        # self.setLayout(west_layout)
-        # self.setLayout(east_layout)
         self.show()
 
     def create_labels(self):
         #Metoda tworząca listę etykiet z kolorów kart
         spade_label = QLabel(spade, self)
+        spade_label.setStyleSheet('color: black')
         heart_label = QLabel(heart, self)
+        heart_label.setStyleSheet('color: red')
         diamond_label = QLabel(diamond, self)
+        diamond_label.setStyleSheet('color: red')
         club_label = QLabel(club, self)
+        club_label.setStyleSheet('color: black')
 
         return [spade_label, heart_label, diamond_label, club_label]
 
@@ -130,16 +134,14 @@ class Window(QWidget):
         #Metoda tworzaca listę pól do wyświetlania tekstu
         cards = [QLineEdit() for i in range(0, size)]
         [cards[i].setReadOnly(True) for i in range(0, size)]
-        # [cards[i]. for i in range(0, size)]
+        [cards[i].setStyleSheet('background: white') for i in range(0, size)]
 
         return cards
 
-    #def insert_value(self, ):
-
-
-if __name__ == '__main__':
-    game = Game()
-    app = QApplication(sys.argv)
-    win = Window()
-    win.north_hands_display[0].setText(game.players[0].hand_s[0].rank)
-    sys.exit(app.exec_())
+#
+# if __name__ == '__main__':
+#     #game = Game()
+#     app = QApplication(sys.argv)
+#     win = Window()
+#     #win.north_hands_display[0].setText(game.players[0].hand_s[0].rank)
+#     sys.exit(app.exec_())
