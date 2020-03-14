@@ -1,7 +1,7 @@
 from random import shuffle
 import random
 
-# Colours of cards definition
+# Kolory kart w unicode
 spade = "\u2660"
 heart = "\u2665"
 diamond = "\u2666"
@@ -89,8 +89,8 @@ class Player:
         self.name = name
         self.hand = sorted(hand)
         self.hand_splitted = [[] for i in range(0, 4)]
-        self.is_dealer = False
-        self.conctracts = None
+        #self.is_dealer = False
+        self.player_contracts = None
 
     def split_hand(self):
         for j in range(0, 13):
@@ -109,36 +109,36 @@ class Player:
         return list_to_string(cards)
 
 
-class Game:
+#class Game:
 
-    def __init__(self):
-        n_players = 4
-        cards = Deck()
-        cards.shuffle()
-        hands = cards.deal(n_players)
-        self.players = [Player(NAMES[i], hands[i]) for i in range(0, n_players)]
-        self.dealer_name = ''
-
-        for j in range(0, len(self.players)):
-            self.players[j].split_hand()
-            for i in range(0, 4):
-                self.players[j].hand_splitted[i] = self.players[j].hand_to_display(self.players[j].hand_splitted[i])
-
-        self.players_order = []
-        self.choose_dealer_and_order()
-
-    def choose_dealer_and_order(self):
-        dealer = random.choice(range(len(self.players)))
-        self.players[dealer].is_dealer = True
-        self.dealer_name = self.players[dealer].name
-        self.players_order.append(self.players[dealer])
-
-        if dealer < len(self.players) - 1:
-            for i in range(dealer + 1, len(self.players)):
-                self.players_order.append(self.players[i])
-        if dealer > 0:
-            for i in range(0, dealer):
-                self.players_order.append(self.players[i])
+    # def __init__(self):
+    #     n_players = 4
+    #     cards = Deck()
+    #     cards.shuffle()
+    #     hands = cards.deal(n_players)
+    #     self.players = [Player(NAMES[i], hands[i]) for i in range(0, n_players)]
+    #     self.dealer_name = ''
+    #
+    #     for j in range(0, len(self.players)):
+    #         self.players[j].split_hand()
+    #         for i in range(0, 4):
+    #             self.players[j].hand_splitted[i] = self.players[j].hand_to_display(self.players[j].hand_splitted[i])
+    #
+    #     self.players_order = []
+    #     self.choose_dealer_and_order()
+    #
+    # def choose_dealer_and_order(self):
+    #     dealer = random.choice(range(len(self.players)))
+    #     self.players[dealer].is_dealer = True
+    #     self.dealer_name = self.players[dealer].name
+    #     self.players_order.append(self.players[dealer])
+    #
+    #     if dealer < len(self.players) - 1:
+    #         for i in range(dealer + 1, len(self.players)):
+    #             self.players_order.append(self.players[i])
+    #     if dealer > 0:
+    #         for i in range(0, dealer):
+    #             self.players_order.append(self.players[i])
 
 # selff = Game()
 

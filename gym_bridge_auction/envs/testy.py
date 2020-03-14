@@ -2,7 +2,10 @@ import gym
 import gym_bridge_auction
 
 env = gym.make('BridgeAuction-v0')
-env.render()
+env.reset()
+for i in range(0,4):
+    env.render()
+    #env.
 
 a = [1, 2, 3, 4, 1, 2, 3]
 b = [ [] for i in range(4)]

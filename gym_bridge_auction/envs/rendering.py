@@ -138,10 +138,19 @@ class Window(QWidget):
 
         return cards
 
-#
-# if __name__ == '__main__':
-#     #game = Game()
-#     app = QApplication(sys.argv)
-#     win = Window()
-#     #win.north_hands_display[0].setText(game.players[0].hand_s[0].rank)
-#     sys.exit(app.exec_())
+
+
+
+if __name__ == '__main__':
+    #game = Game()
+    app = QApplication(sys.argv)
+    win = Window()
+    pom = 1
+    #win.north_hands_display[0].setText(game.players[0].hand_s[0].rank)
+    win.last_contract_display[0].setText(str(pom))
+    app.exec_()
+    app.exit()
+    pom += 1
+    app.exec_()
+
+
