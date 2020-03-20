@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QGridLayout, QLineEdit
 from PyQt5.QtGui import QColor
 from gym_bridge_auction.envs.game import *
+import time
 
 
 class Window(QWidget):
@@ -148,9 +149,11 @@ if __name__ == '__main__':
     pom = 1
     #win.north_hands_display[0].setText(game.players[0].hand_s[0].rank)
     win.last_contract_display[0].setText(str(pom))
-    app.exec_()
-    app.exit()
-    pom += 1
-    app.exec_()
+    win.close()
+    #win.show()
+    #time.sleep(10)
+    sys.exit(app.exec_())
+
+
 
 

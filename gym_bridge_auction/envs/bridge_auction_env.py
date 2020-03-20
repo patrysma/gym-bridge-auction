@@ -1,21 +1,22 @@
 import gym
+from gym import error, spaces
+from gym_bridge_auction.envs.render import *
 import random
-from gym import error, spaces, utils
-from gym.utils import seeding
-from gym_bridge_auction.envs.rendering import *
+import time
 
-#dopisać warunki do renderu, żeby narpiew zrobić reset
-#warunek czy konsloa to wtedy drukuj state, a jak human to renderować normalnie - też do renderu
+
+# dopisać warunki do renderu, żeby narpiew zrobić reset
 
 class AuctionEnv(gym.Env):
-    metadata = {'render.modes': ['human', 'console']}
+    metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 1000}
 
     def __init__(self):
 
-        self.app = QApplication(sys.argv)
-        self.win = Window()
+        #self.app = QApplication(sys.argv)
+        self.win = None
+        self.viewer = None
         self.n_players = 4
-        self.deck = Deck() #tworzenie talii
+        self.deck = Deck()  # tworzenie talii
         self.players = []
         self.observation_space = spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
                                               'LAST_contract': spaces.Discrete(36),
@@ -26,12 +27,11 @@ class AuctionEnv(gym.Env):
         self.action_space = spaces.Discrete(36)
         self.dealer = None
         self.dealer_name = ''
-        self.index_order = None #indeks w players order
+        self.index_order = None  # indeks w players order
         self.players_order = []
         self.last_contract = None
-        self.pom = 0
-        #self.state = {}
-        #Utworzenie dostępnych kontraktów
+        # self.state = {}
+        # Utworzenie dostępnych kontraktów
         self.available_contracts = self.create_avaliable_contracts()
         self.deck.shuffle()
         hands = self.deck.deal(self.n_players)
@@ -47,7 +47,6 @@ class AuctionEnv(gym.Env):
         self.pass_number = 0
         self.reset()
 
-
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
         state = {}
@@ -57,42 +56,67 @@ class AuctionEnv(gym.Env):
 
         if self.index_order == 4:
             self.index_order = 0
+        done = self.is_over(action)
 
+        return state, self.reward, done, {}
 
     def reset(self):
-        #metoda ustawia środowisko w pocztątkowy stan
-        # self.deck.shuffle()
-        # hands = self.deck.deal(self.n_players)
-        # self.players = [Player(NAMES[i], hands[i]) for i in range(0, self.n_players)]
-        #
-        # for j in range(0, len(self.players)):
-        #     self.players[j].split_hand()
-        #     for i in range(0, 4):
-        #         self.players[j].hand_splitted[i] = self.players[j].hand_to_display(self.players[j].hand_splitted[i])
-        #
-        # self.choose_dealer_and_order()
         self.pass_number = 0
         self.reward = None
+        self.viewer = None
         return self.get_game_state(None, True)
 
     def render(self, mode='human'):
 
         if mode == 'human':
-            self.hand_display(self.players[0].hand_splitted, self.win.north_hands_display)
-            self.hand_display(self.players[1].hand_splitted, self.win.east_hands_display)
-            self.hand_display(self.players[2].hand_splitted, self.win.south_hands_display)
-            self.hand_display(self.players[3].hand_splitted, self.win.west_hands_display)
-            self.win.who_is_dealer[0].setText(self.dealer_name)
-            sys.exit(self.app.exec_())
-        #self.win.last_contract_display[0].setText(str(self.pom))
+
+            if self.viewer is None:
+                self.win = Window(self.players[0].hand_splitted, self.players[1].hand_splitted,
+                                 self.players[2].hand_splitted, self.players[3].hand_splitted, self.dealer_name)
+                self.viewer = True
+
+            else:
+                self.win.update_view(self.last_contract.__str__(), self.players[0].player_contracts.__str__(),
+                                     self.players[1].player_contracts.__str__(),
+                                     self.players[2].player_contracts.__str__(),
+                                     self.players[3].player_contracts.__str__(),
+                                     self.metadata['video.frames_per_second'])
+
+            time.sleep(1)
+
+
+        elif mode == 'console':
+            if self.viewer is None:
+                print('Dealer: ' + self.dealer_name)
+
+                for i in range(0, self.n_players):
+                    print(' ')
+                    print(self.players[i].name + ' hand:')
+                    print(spade + ' ' + self.players[i].hand_splitted[0])
+                    print(heart + ' ' + self.players[i].hand_splitted[1])
+                    print(diamond + ' ' + self.players[i].hand_splitted[2])
+                    print(club + ' ' + self.players[i].hand_splitted[3])
+
+                self.viewer = True
+
+            else:
+                print('')
+                print('LAST_contract: ' + self.last_contract.__str__())
+                print('NORTH_contract: ' + self.players[0].player_contracts.__str__())
+                print('EAST_contract: ' + self.players[1].player_contracts.__str__())
+                print('SOUTH_contract: ' + self.players[2].player_contracts.__str__())
+                print('WEST_contract: ' + self.players[3].player_contracts.__str__())
+
+        else:
+            raise error.UnsupportedMode('Unsupported render mode' + mode)
+        # self.win.last_contract_display[0].setText(str(self.pom))
 
         # self.win.north_hands_display[0].setText((self.game.players[0].hand_splitted[0]))
         # self.win.north_hands_display[1].setText((self.game.players[0].hand_splitted[1]))
-        #self.insert_cards(self.win.north_hands_display[0], self.game.players[0].hand_d)
-
+        # self.insert_cards(self.win.north_hands_display[0], self.game.players[0].hand_d)
 
     def close(self):
-        print('close')
+        self.viewer = None
 
     def hand_display(self, hand, display):
         for i in range(0, 4):
@@ -110,7 +134,7 @@ class AuctionEnv(gym.Env):
 
     def choose_dealer_and_order(self):
         self.dealer = random.choice(range(len(self.players)))
-        #self.players[dealer].is_dealer = True
+        # self.players[dealer].is_dealer = True
         self.dealer_name = self.players[self.dealer].name
         self.index_order = 0
         self.players_order.append(self.players[self.dealer])
@@ -141,16 +165,20 @@ class AuctionEnv(gym.Env):
             player_index = self.players.index(self.players_order[self.index_order])
             state['whose turn'] = player_index
 
-            if action > self.last_contract.value:
-                state['LAST_contract'] = action
-                self.last_contract = self.available_contracts[action]
-            elif (self.last_contract is None) and (action == 0):
-                #jak ostatni kontrakt jest pusty i pierwszy jest pass
+            if (self.last_contract is None) and (action == 0):
+                # jak ostatni kontrakt jest pusty i pierwszy jest pass
                 state['LAST_contract'] = action
                 self.last_contract = self.available_contracts[action]
             elif (self.last_contract is None) and (action != 0):
                 state['LAST_contract'] = action
                 self.last_contract = self.available_contracts[action]
+
+            if action > self.last_contract.value:
+                state['LAST_contract'] = action
+                self.last_contract = self.available_contracts[action]
+            else:
+                state['LAST_contract'] = self.last_contract.value
+                self.last_contract = self.last_contract
 
             self.players[player_index].player_contracts = self.available_contracts[action]
 
@@ -185,6 +213,9 @@ class AuctionEnv(gym.Env):
         else:
             self.pass_number = 0
 
+        if self.pass_number == 4:
+            return True
+        else:
+            return False
 
-
-#Napisać funkcję wyznaczjącą ostateczny kontrakt, czyli maksymalny wypowiedziany
+# Napisać funkcję wyznaczjącą ostateczny kontrakt, czyli maksymalny wypowiedziany

@@ -1,5 +1,4 @@
 from random import shuffle
-import random
 
 # Kolory kart w unicode
 spade = "\u2660"
