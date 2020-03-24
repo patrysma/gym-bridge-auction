@@ -6,37 +6,59 @@ heart = "\u2665"
 diamond = "\u2666"
 club = "\u2663"
 
-# Players names
+# Nazwy poszczególych graczy, w kolejności zegarowej od północy (N - North, E - East, S - South, W -West)
 NAMES = ['N', 'E', 'S', 'W']
 
 
 class Contract:
+    """Klasa definiująca poszczególne kontrakty licytacji brydżowej -
+    {pass, 1C, 1D, 1H, 1S, 1NT, ..., 1C, 1D, 1H, 1S, 1NT}
+    gdzie:
+    suit - miano odzywki - symbole kolorów, czyli (od najmłodszego): C-Club (trefl), D-Diamond (karo), H-Heart (kier),
+    S-Spade (pik), NT-no trump (bez atu) plus doadatkowo odzywka "pass";
+    number - parametr określająca liczbę danej odzywki (liczby od 1 do 7), dla pasu nie przypisuje się żadnej liczby;
+    value - parametr określający wyższość danego kontraktu (wartości od 1 do 35), w przypadku pasu przypisano mu
+    wartość zero."""
 
     def __init__(self, suit, number):
+        """Konstruktor klasy przypisujący symbol koloru i wartość kontraktu."""
+
         self.suit = suit
         self.number = number
         self.value = None
 
     def set_value(self, value):
+        """Metoda przypisująca wartość, która określa wyższość danej odzywki podczas licytacji"""
+
         self.value = value
 
-    def get(self):
-        return self.number, self.suit
+    # def get(self):
+    #     return self.number, self.suit
 
     def __str__(self):
+        """Reprezentacja tekstowa kontraktu"""
+
         if self.number is None:
             return self.suit
         else:
-            return str(self.number)+self.suit
+            return str(self.number) + self.suit
 
 
 class Card:
+    """Klasa definiująca daną kartę do gry,
+        gdzie:
+        suit - kolor danej karty - jeden z dostępnych czterech {♠, ♥, ♦, ♣} - kolejno od najmłodszego:
+        trefl, karo, kier, pik;
+        rank - numer bądź figura danej karty - jedno z dostępnych (A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2) -
+        kolejno od najstarszego;
+        value - liczba definiująca pozycję karty w hierarchii (liczby od 2 do 14)"""
 
     def __init__(self, suit, rank):
-        # Konstruktor tworzący kartę
+        """Konstruktor przypisujący kolor, numer/figurę i wartość określającą pozycję karty w hierarchii"""
+
         self.suit = suit
         self.rank = rank
-
+        # Przypisanie wartości określających hierarchię kart
         if rank == 'A':
             self.value = 14
         elif rank == 'K':
@@ -48,50 +70,65 @@ class Card:
         else:
             self.value = int(rank)
 
-    def get(self):
-        return [self.rank, self.suit]
+    # def get(self):
+    #     return [self.rank, self.suit]
 
     def __eq__(self, other):
-        # metoda do sortowania - równość kart
+        """"Metoda określająca równość obiektów - wykorzystywana do sortowania kart"""
+
         return self.value == other.value and self.suit == other.suit
 
     def __lt__(self, other):
-        # metoda do sortowania - porównanie kart
+        """Metoda porównywująca obiekty - wykorzystywana do sortowania kart"""
+
         return self.value < other.value
 
 
 class Deck:
+    """Klasa definiująca talię 52 kart do gry w brydża"""
 
-    def __init__(self):  # tworzenie talii
-        rank = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']
-        suites = [heart, spade, club, diamond]
-        self.deck = [Card(i, k) for i in suites for k in rank]  # tworzenie talii
+    def __init__(self):
+        """Konstruktor tworzący listę wszystkich kart do gry - 52 obiektów typu Card"""
 
-        # self.deck[0].get()
-        # self.deck_order = [c.value for c in self.deck]
+        rank = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']  # numery/figury karty
+        suites = [heart, spade, club, diamond]  # kolory karty
+        self.deck = [Card(i, k) for i in suites for k in rank]
 
     def shuffle(self):
-        shuffle(self.deck)  # tasowanie kart
+        """Metoda tasująca talię"""
 
-    def deal(self, n_players):  # rozdanie kart
-        return [self.deck[i::n_players] for i in range(0, n_players)]  # rozdanie kart do graczy
+        shuffle(self.deck)
+
+    def deal(self, n_players):
+        """Metoda rozdająca karty do określonej przez parametr n_players liczby graczy"""
+
+        return [self.deck[i::n_players] for i in range(0, n_players)]
 
 
 def list_to_string(old_list):
+    """Funkcja zamieniająca listę w postać napisową"""
+
     new_list = " "
     return new_list.join(old_list)
 
 
 class Player:
-    # przerobić hand w kolorach na listy
+    """Klasa definiująca gracza w brydżu, który ma swoją nazwę, rękę (karty jakie posiada)"""
+
     def __init__(self, name, hand):
+        """Konstruktor przypisujący graczowi imię (name) i rękę (hand) - dostępne karty oraz incjalizujący
+        inne atrybuty klasy"""
+
         self.name = name
-        self.hand = sorted(hand)
-        self.hand_splitted = [[] for i in range(0, 4)]
-        #self.is_dealer = False
-        self.player_contracts = None
+        self.hand = sorted(hand)  # ręka gracza posortowana od najmłodszych dwójek (2) poszczegónych kolorów do asów (A)
+        self.hand_splitted = [[] for i in range(0, 4)]  # ręka gracza rozdzielona ze względu kolory kart
+        self.win_auction = False  # określenie czy dany gracz wygrał licytację
+        self.player_contracts = None  # odzywka danego gracza
 
     def split_hand(self):
+        """Metoda rodzielająca rękę gracza na poszczegolne kolory kart (od najstarszego do najmłodszego),
+         gdzie w pierwszym wierszu są piki, w drugim - kiery, w trzecim - kara, a w czwartym - trefle"""
+
         for j in range(0, 13):
             if self.hand[j].suit == spade:
                 self.hand_splitted[0].append(self.hand[j])
@@ -103,54 +140,10 @@ class Player:
                 self.hand_splitted[3].append(self.hand[j])
 
     def hand_to_display(self, hand):
+        """Metoda zwracająca napisową postać figur i numerów karty danego koloru,
+        gdzie:
+        hand - ręka gracza w danym kolorze"""
+
         cards = [c.rank for c in hand]
 
         return list_to_string(cards)
-
-
-#class Game:
-
-    # def __init__(self):
-    #     n_players = 4
-    #     cards = Deck()
-    #     cards.shuffle()
-    #     hands = cards.deal(n_players)
-    #     self.players = [Player(NAMES[i], hands[i]) for i in range(0, n_players)]
-    #     self.dealer_name = ''
-    #
-    #     for j in range(0, len(self.players)):
-    #         self.players[j].split_hand()
-    #         for i in range(0, 4):
-    #             self.players[j].hand_splitted[i] = self.players[j].hand_to_display(self.players[j].hand_splitted[i])
-    #
-    #     self.players_order = []
-    #     self.choose_dealer_and_order()
-    #
-    # def choose_dealer_and_order(self):
-    #     dealer = random.choice(range(len(self.players)))
-    #     self.players[dealer].is_dealer = True
-    #     self.dealer_name = self.players[dealer].name
-    #     self.players_order.append(self.players[dealer])
-    #
-    #     if dealer < len(self.players) - 1:
-    #         for i in range(dealer + 1, len(self.players)):
-    #             self.players_order.append(self.players[i])
-    #     if dealer > 0:
-    #         for i in range(0, dealer):
-    #             self.players_order.append(self.players[i])
-
-# selff = Game()
-
-# for i in range(0, 13):
-#   print(selff.players[1].hand[i].get())
-
-# print(players.north_player.hand[0].get())
-# selff.split_hand()
-
-# print(" ")
-# print(selff.players[1].hand_s[0].get())
-
-# c = Cards()
-# print(c.deck)
-# print(c.deck_order)
-# print(c.deck_sorted_order)

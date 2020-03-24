@@ -4,7 +4,7 @@ import gym_bridge_auction
 env = gym.make('BridgeAuction-v0')
 observation = env.reset()
 env.render()
-for i in range(0,4):
+for i in range(0,8):
     #env.render()
     action = env.action_space.sample()
     observation, reward, done, info = env.step(action)
@@ -12,7 +12,6 @@ for i in range(0,4):
     print(observation)
     print(reward)
 env.close()
-
 
 
 

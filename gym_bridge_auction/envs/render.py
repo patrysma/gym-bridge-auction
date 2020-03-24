@@ -41,21 +41,26 @@ class Window:
         # incjalizacja i utworzenie obiektu Font
         default_font = pygame.font.match_font('dejavusansmono')
         self.font = pygame.font.Font(default_font, 20)
+        # prostokątne ramki oddzielające miejsce poszczególnych graczy na ekranie
+        pygame.draw.rect(self.screen, self.colours['blue'], pygame.Rect(540, 140, 400, 250), 1)
+        pygame.draw.rect(self.screen, self.colours['blue'], pygame.Rect(1040, 340, 400, 250), 1)
+        pygame.draw.rect(self.screen, self.colours['blue'], pygame.Rect(540, 540, 400, 250), 1)
+        pygame.draw.rect(self.screen, self.colours['blue'], pygame.Rect(40, 340, 400, 250), 1)
         # utworzenie etykiety i umiejscowienie na ekranie
         # etykiety poszczególnych graczy
         north_player_label = self.font.render(NAMES[0], 1, self.colours['blue'])
-        self.screen.blit(north_player_label, (600, 200))
+        self.screen.blit(north_player_label, (650, 150))
         colour_labels = self.create_colours_label()
-        self.place_labels(colour_labels, 500, 250)
+        self.place_labels(colour_labels, 550, 200)
         east_player_label = self.font.render(NAMES[1], 1, self.colours['blue'])
-        self.screen.blit(east_player_label, (1100, 400))
-        self.place_labels(colour_labels, 1000, 450)
+        self.screen.blit(east_player_label, (1150, 350))
+        self.place_labels(colour_labels, 1050, 400)
         south_player_label = self.font.render(NAMES[2], 1, self.colours['blue'])
-        self.screen.blit(south_player_label, (600, 600))
-        self.place_labels(colour_labels, 500, 650)
+        self.screen.blit(south_player_label, (650, 550))
+        self.place_labels(colour_labels, 550, 600)
         west_player_label = self.font.render(NAMES[3], 1, self.colours['blue'])
-        self.screen.blit(west_player_label, (110, 400))
-        self.place_labels(colour_labels, 10, 450)
+        self.screen.blit(west_player_label, (150, 350))
+        self.place_labels(colour_labels, 50, 400)
         # etykiety licytacji i wyników
         north_contract_label = self.font.render("NORTH Contract:", 1, self.colours['black'])
         self.screen.blit(north_contract_label, (10, 10))
@@ -82,6 +87,12 @@ class Window:
         self.players_contracts_display = None
         self.who_is_dealer = who_is_dealer
         self.last_contract_display = None
+        # wyświetlenie rąk graczy
+        self.create_list_of_labels(self.north_hands_display, 600, 200)
+        self.create_list_of_labels(self.east_hands_display, 1100, 400)
+        self.create_list_of_labels(self.south_hands_display, 600, 600)
+        self.create_list_of_labels(self.west_hands_display, 100, 400)
+        pygame.display.update()
 
     def create_colours_label(self):
         """Metoda tworząca etykiety poszczególnych kolorów kart"""
@@ -127,11 +138,9 @@ class Window:
            gdzie podane parametry to: ostatni najwyższy kontrakt i kontrakty poszczególnych graczy - zmienne typu str
            oraz ilość klatek na sekundę"""
 
-        # wyświetlenie rąk graczy
-        self.create_list_of_labels(self.north_hands_display, 550, 250)
-        self.create_list_of_labels(self.east_hands_display, 1050, 450)
-        self.create_list_of_labels(self.south_hands_display, 550, 650)
-        self.create_list_of_labels(self.west_hands_display, 60, 450)
+        # prostokąty zakrywające poprzednie wartości zmieniającego się tekstu
+        pygame.draw.rect(self.screen, self.colours['green'], pygame.Rect(210, 10, 300, 200))
+        pygame.draw.rect(self.screen, self.colours['green'], pygame.Rect(1200, 10, 300, 50))
         # wyświetlenie rozdającego
         self.screen.blit(self.create_mutable_labels(self.who_is_dealer, self.font), (1200, 60))
         # wyświetlenie kontraktów
@@ -139,27 +148,16 @@ class Window:
         self.last_contract_display = last_contract
         self.screen.blit(self.create_mutable_labels(self.last_contract_display, self.font), (1200, 10))
         self.create_list_of_labels(self.players_contracts_display, 210, 10)
-        #aktualizacja i ustawienie ilości klatek na sekundę
+        # aktualizacja i ustawienie ilości klatek na sekundę
         pygame.display.update()
         self.clock.tick(frames_per_second)
+        # obsługa zdarzenia - zakmknięcie okna przyciskiem
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.close_window()
+                return
 
     def close_window(self):
+        """Metoda zamykająca okno i kończąca program"""
         pygame.quit()
-#
-#
-# if __name__ == '__main__':
-#     win = Window()
-#     crashed = False
-#
-#     while not crashed:
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 crashed = True
-#
-#             print(event)
-#
-#         win.update_view()
-#         pygame.display.update()
-#         win.clock.tick(60)
-#
-#     pygame.quit()
+        quit()
