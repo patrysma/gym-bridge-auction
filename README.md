@@ -1,6 +1,7 @@
 # gym_bridge_auction
 Środowisko do licytacji brydżowej
 
+```
 import gym
 import gym_bridge_auction
 import pygame
@@ -26,4 +27,4 @@ for i_episode in range(5):
             break
 
 env.close()
-
+```
