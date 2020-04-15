@@ -9,10 +9,13 @@ club = "\u2663"
 # Nazwy poszczególych graczy, w kolejności zegarowej od północy (N - North, E - East, S - South, W -West)
 NAMES = ['N', 'E', 'S', 'W']
 
+# miana odzywki
+BIND_SUIT = ['C', 'D', 'H', 'S', 'NT']
+
 
 class Contract:
     """Klasa definiująca poszczególne kontrakty licytacji brydżowej -
-    {pass, 1C, 1D, 1H, 1S, 1NT, ..., 1C, 1D, 1H, 1S, 1NT}
+    {pass, 1C, 1D, 1H, 1S, 1NT, ..., 7C, 7D, 7H, 7S, 7NT}
     gdzie:
     suit - miano odzywki - symbole kolorów, czyli (od najmłodszego): C-Club (trefl), D-Diamond (karo), H-Heart (kier),
     S-Spade (pik), NT-no trump (bez atu) plus doadatkowo odzywka "pass";
@@ -91,7 +94,7 @@ class Deck:
         """Konstruktor tworzący listę wszystkich kart do gry - 52 obiektów typu Card"""
 
         rank = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']  # numery/figury karty
-        suites = [heart, spade, club, diamond]  # kolory karty
+        suites = [spade, heart, diamond, club]  # kolory karty
         self.deck = [Card(i, k) for i in suites for k in rank]
 
     def shuffle(self):
@@ -124,6 +127,9 @@ class Player:
         self.hand_splitted = [[] for i in range(0, 4)]  # ręka gracza rozdzielona ze względu kolory kart
         self.win_auction = False  # określenie czy dany gracz wygrał licytację
         self.player_contracts = None  # odzywka danego gracza
+        self.makeable_contracts = {}  # maksymalne realizowane kontrakty wyznaczone za pomocą solvera
+        self.number_of_trick = {}  # maksymalna liczba wzięty lew wyznaczona za pomocą solvere
+        self.max_contract_trump = []  # miano najbardziej punktowanych kontraktów
 
     def split_hand(self):
         """Metoda rodzielająca rękę gracza na poszczegolne kolory kart (od najstarszego do najmłodszego),

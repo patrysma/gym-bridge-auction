@@ -3,6 +3,7 @@ from gym import spaces
 from gym_bridge_auction.envs.render import *
 import random
 import time
+from gym_bridge_auction.envs.solver_results import *
 
 
 class AuctionEnv(gym.Env):
@@ -10,46 +11,55 @@ class AuctionEnv(gym.Env):
 
     def __init__(self):
 
-        self.win = None  # instancja interfejsu graficznego
+        self._win = None  # instancja interfejsu graficznego
         self.viewer = None  # zmienna pomocnicza do renderowania
         self.n_players = 4  # liczba graczy
         self.deck = Deck()  # utworzenie talii
         self.players = []  # lista graczy
         # przestrzeń obserwacji
         self.observation_space = spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
+                                              'whose next turn': spaces.Discrete(self.n_players),
                                               'LAST_contract': spaces.Discrete(36),
                                               'NORTH_contract': spaces.Discrete(36),
                                               'EAST_contract': spaces.Discrete(36),
                                               'SOUTH_contract': spaces.Discrete(36),
                                               'WEST_contract': spaces.Discrete(36),
-                                              'winning_pair': spaces.Discrete(self.n_players/2)})
+                                              'winning_pair': spaces.Discrete(self.n_players / 2)})
         self.action_space = spaces.Discrete(36)  # przestrzeń dostępnych działań agenta
+
         self.dealer_name = ''  # Nazwa gracza, który to rozdający
         self.index_order = None  # indeks aktualnie licytującego gracza (z listy graczy w odpowiedniej kolejności)
         self.players_order = []  # lista graczy ustawionych w odpowiedniej kolejności licytowania
         self.last_contract = None  # ustalony kontrakt
+        self.first_bind_pass = False  # czy pierwsza odzywka była pasem
         # self.state = {}
+
         # Utworzenie dostępnych kontraktów (lista obiektów typu Contract)
         self.available_contracts = self.create_available_contracts()
         self.deck.shuffle()  # tasowanie talii
-        hands = self.deck.deal(self.n_players)  # rozdanie kart dla graczy
-        self.players = [Player(NAMES[i], hands[i]) for i in range(0, self.n_players)]  # utworzenie listy graczy
+        _hands = self.deck.deal(self.n_players)  # rozdanie kart dla graczy
+        self.players = [Player(NAMES[i], _hands[i]) for i in range(0, self.n_players)]  # utworzenie listy graczy
+
         # rozdzielenie rąk graczy ze względu na kolor karty (w każdym wierszu figury/numery w danym kolorze)
         for j in range(0, len(self.players)):
             self.players[j].split_hand()
             for i in range(0, 4):
                 self.players[j].hand_splitted[i] = self.players[j].hand_to_display(self.players[j].hand_splitted[i])
 
-        self.choose_dealer_and_order()  #wybór rozdającego i kolejność licytacji
+        self.choose_dealer_and_order()  # wybór rozdającego i kolejność licytacji
         self.reward = None
         self.pass_number = 0
+        self.insert_solver_results()  # wstawienie wyników z solvera dla poszczególnych graczy
         self.reset()
 
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
-        #state = {}
+        # state = {}
+        if action != 0:  # zmniejaszanie się dostępnych odzywek licytacyjnych
+            self.action_space.n = action
+
         state = self.get_game_state(action, False)
-        self.get_reward(action)
+        self.get_reward(action, state['whose turn'])
         self.index_order += 1
 
         if self.index_order == 4:
@@ -61,6 +71,10 @@ class AuctionEnv(gym.Env):
     def reset(self):
         self.reward = None
         self.viewer = None
+        self.pass_number = 0
+        self.index_order = 0
+        self.first_bind_pass = False
+        self.action_space.n = 36
         return self.get_game_state(None, True)
 
     def render(self, mode='console'):
@@ -68,16 +82,16 @@ class AuctionEnv(gym.Env):
         if mode == 'human':
 
             if self.viewer is None:
-                self.win = Window(self.players[0].hand_splitted, self.players[1].hand_splitted,
-                                  self.players[2].hand_splitted, self.players[3].hand_splitted, self.dealer_name)
+                self._win = Window(self.players[0].hand_splitted, self.players[1].hand_splitted,
+                                   self.players[2].hand_splitted, self.players[3].hand_splitted, self.dealer_name)
                 self.viewer = True
 
             else:
-                self.win.update_view(self.last_contract.__str__(), self.players[0].player_contracts.__str__(),
-                                     self.players[1].player_contracts.__str__(),
-                                     self.players[2].player_contracts.__str__(),
-                                     self.players[3].player_contracts.__str__(),
-                                     self.metadata['video.frames_per_second'])
+                self._win.update_view(self.last_contract.__str__(), self.players[0].player_contracts.__str__(),
+                                      self.players[1].player_contracts.__str__(),
+                                      self.players[2].player_contracts.__str__(),
+                                      self.players[3].player_contracts.__str__(),
+                                      self.metadata['video.frames_per_second'])
 
             time.sleep(2)
 
@@ -109,7 +123,7 @@ class AuctionEnv(gym.Env):
     def close(self):
         if self.viewer is True:
             # jak mode == 'human'
-            self.win.close_window()
+            self._win.close_window()
             self.viewer = None
             quit()
         elif self.viewer is False:
@@ -120,14 +134,55 @@ class AuctionEnv(gym.Env):
             self.viewer = None
             quit()
 
+    def pbn_deal_representation(self):
+        """Dane rozdanie w formacie PBN"""
+
+        pbn = ""
+        pbn += self.dealer_name
+        pbn += ':'
+
+        for j in range(0, self.n_players):
+
+            for i in range(0, 4):
+                list_pom = self.players[j].hand_splitted[i].split()
+                list_pom.reverse()
+
+                for k in list_pom:
+                    if k == '10':
+                        pbn += 'T'
+                    else:
+                        pbn += k
+
+                if i < 3:
+                    pbn += '.'
+
+            if j < 3:
+                pbn += " "
+
+        return pbn
+
+    def insert_solver_results(self):
+        """Metoda przypisująca wszystkim graczom odpowiednie rezultaty o ilości wziętych lew i maksymalnych możliwych
+        kontraktach otrzymanych z Dummy Double Solver"""
+
+        pbn_repr = self.pbn_deal_representation()
+        solver_results = get_results_from_solver(pbn_repr)
+
+        for i in range(0, self.n_players):
+            self.players[i].number_of_trick = get_solver_result_for_player(i, solver_results)
+            self.players[i].makeable_contracts = max_contract_for_suit(self.players[i].number_of_trick)
+            points_for_contracts = calc_point_for_contract(self.players[i].makeable_contracts)
+            self.players[i].max_contract_trump = choose_best_contracts(points_for_contracts)
+
     @staticmethod
     def create_available_contracts():
         """Utworzenie dostępnych kontraktów podczas licytacji"""
 
-        suits = ['C', 'D', 'H', 'S', 'NT']
         numbers = [1, 2, 3, 4, 5, 6, 7]
-        contracts = [Contract('pass', None)]
-        contracts.extend([Contract(i, j) for j in numbers for i in suits])
+        contracts = [Contract(i, j) for j in numbers for i in BIND_SUIT]
+        contracts.reverse()
+        contracts.insert(0, Contract('pass', None))
+
         for i in range(0, len(contracts)):
             contracts[i].value = i
 
@@ -154,12 +209,14 @@ class AuctionEnv(gym.Env):
 
         state = {}
 
+        # przestrzeń obserwacji dla funkcji reset
         if reset:
             for i in range(0, len(self.players)):
                 self.players[i].player_contracts = None
                 self.players[i].win_auction = False
 
             state['whose turn'] = None
+            state['whose next turn'] = self.players.index(self.players_order[0])
             state['LAST_contract'] = None
             state['NORTH_contract'] = None
             state['EAST_contract'] = None
@@ -173,26 +230,41 @@ class AuctionEnv(gym.Env):
             player_index = self.players.index(self.players_order[self.index_order])
             state['whose turn'] = player_index
 
+            if player_index == 3:
+                state['whose next turn'] = 0
+            else:
+                state['whose next turn'] = player_index + 1
+
             if (self.last_contract is None) and (action == 0):
                 # jak ostatni kontrakt jest pusty i pierwszy jest pass
+                self.first_bind_pass = True
                 state['LAST_contract'] = action
                 self.last_contract = self.available_contracts[action]
+
                 for i in range(0, len(self.players)):
                     self.players[i].win_auction = False
-                self.players[player_index].win_auction = True
-            elif (self.last_contract is None) and (action != 0):
-                state['LAST_contract'] = action
-                self.last_contract = self.available_contracts[action]
-                for i in range(0, len(self.players)):
-                    self.players[i].win_auction = False
+
                 self.players[player_index].win_auction = True
 
-            if action > self.last_contract.value:
+            elif (self.last_contract is None) and (action != 0):
+
                 state['LAST_contract'] = action
                 self.last_contract = self.available_contracts[action]
+
                 for i in range(0, len(self.players)):
                     self.players[i].win_auction = False
+
                 self.players[player_index].win_auction = True
+
+            if action < self.last_contract.value and action != 0:
+                state['LAST_contract'] = action
+                self.last_contract = self.available_contracts[action]
+
+                for i in range(0, len(self.players)):
+                    self.players[i].win_auction = False
+
+                self.players[player_index].win_auction = True
+
             elif action == 0:
                 state['LAST_contract'] = self.last_contract.value
                 self.last_contract = self.last_contract
@@ -220,21 +292,30 @@ class AuctionEnv(gym.Env):
 
         return state
 
-    def get_reward(self, action):
+    def get_reward(self, action, player_index):
         """Wyznaczenie nagrody za wykonane działanie przez poszczególnego agenta"""
 
-        if self.reward is None:
-            if action == 0:
-                self.reward = 0
-            else:
-                self.reward = 1
+        if action == 0:
+            self.reward = 0
         else:
-            if action > self.last_contract.value:
-                self.reward = 1
-            elif action == 0:
-                self.reward = 0
-            elif action <= self.last_contract.value:
-                self.reward = -1
+            bind_trump = self.available_contracts[action].suit
+            bind_number = self.available_contracts[action].number
+            max_contract = self.players[player_index].makeable_contracts[bind_trump]
+            max_number_of_tricks = self.players[player_index].number_of_trick[bind_trump]
+
+            if max_contract == 0:
+                self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
+            else:
+                if bind_number > max_contract:
+                    self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
+                elif bind_number <= max_contract:
+                    if bind_trump == 'NT':
+                        self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
+                    else:
+                        self.reward = POINTS[bind_trump] * bind_number
+
+                    if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
+                        self.reward += POINTS['BONUS']
 
     def is_over(self, action):
         """Wyznaczenie warunku końca licytacji - po 3 pasach z rzędu"""
@@ -244,8 +325,10 @@ class AuctionEnv(gym.Env):
         else:
             self.pass_number = 0
 
-        if self.pass_number == 3:
+        if self.first_bind_pass and self.pass_number == 4:
+            return True
+
+        if self.pass_number == 3 and (not self.first_bind_pass):
             return True
         else:
             return False
-
