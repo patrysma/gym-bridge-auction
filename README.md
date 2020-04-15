@@ -1,6 +1,12 @@
 # gym_bridge_auction
 Środowisko do licytacji brydżowej
 
+Działanie środowiska przetestowano w systemie Linux.
+
+Aby użyć środowiska konieczne jest zainstalowanie następujących bibliotek: `pygame` , `cppyy` i `gym`.
+
+Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `\usr\lib`
+
 ```
 import gym
 import gym_bridge_auction
