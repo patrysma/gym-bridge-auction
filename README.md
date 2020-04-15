@@ -5,7 +5,9 @@ Działanie środowiska przetestowano w systemie Linux.
 
 Aby użyć środowiska konieczne jest zainstalowanie następujących bibliotek: `pygame` , `cppyy` i `gym`.
 
-Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `\usr\lib`
+Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `\usr\lib\` w swoim systemie.
+
+Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`.
 
 ```
 import gym
