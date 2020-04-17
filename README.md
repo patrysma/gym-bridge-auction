@@ -38,4 +38,4 @@ env.close()
 
 Działanie opcji z interfejsem graficznym:
 
-[![Watch the video](https://imgur.com/058RZlw)](https://youtu.be/DybSAue5bYY)
+[![Watch the video](https://i.imgur.com/058RZlw.jpg)](https://youtu.be/DybSAue5bYY)
