@@ -4,13 +4,13 @@
 
 W tym środowisku agenci wykonują kolejno pojedyńcze akcje (licytują). Dlatego funkcja `step()` przyjmuje tylko jedno działanie agenta, który zgodnie z ustaloną kolejnością powinien licytować i zwraca jedną obserwację, nagrodę i informację czy należy zresetować środowisko (czy otrzymano 3 pasy po kolei, czyli zakończono licytację). 
 
-Przestarzeń akcji zdefiniowano następująco: `self.action_space = spaces.Discrete(36)`.
+Przestarzeń akcji zdefiniowano następująco: ``python spaces.Discrete(36)``. Gdzie poszczególne liczby oznaczają odzywki l
 
 Działanie środowiska przetestowano w systemie Linux.
 
 Aby użyć środowiska konieczne jest zainstalowanie następujących bibliotek: `pygame` , `cppyy` i `gym`.
 
-Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `\usr\lib\` w swoim systemie.
+Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` w swoim systemie.
 
 Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`.
 
