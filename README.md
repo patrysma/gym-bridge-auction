@@ -11,6 +11,7 @@ spaces.Discrete(36)
 Poszczególne liczby oznaczają różne odzywki licytacyjne. Przestrzeń akcji zmniejsza się (gdy agenci nie pasują) w każdym kroku i zawiera odzywki wyższe od ostatniej wypowiedzianej. Oznaczenia przedstawiono poniżej.
 
 Liczba  Działanie
+
 0       pass
 1       7NT
 2       7S
