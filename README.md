@@ -26,6 +26,19 @@ Poszczególne liczby oznaczają różne odzywki licytacyjne. Przestrzeń akcji z
 | 34 | 1D |
 | 35 | 1C |
 
+Przestrzeń obserwacji zdefiniowano następująco:
+
+```python
+spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
+                                              'whose next turn': spaces.Discrete(self.n_players),
+                                              'LAST_contract': spaces.Discrete(36),
+                                              'NORTH_contract': spaces.Discrete(36),
+                                              'EAST_contract': spaces.Discrete(36),
+                                              'SOUTH_contract': spaces.Discrete(36),
+                                              'WEST_contract': spaces.Discrete(36),
+                                              'winning_pair': spaces.Discrete(self.n_players / 2)})
+```
+
 Działanie środowiska przetestowano w systemie Linux.
 
 Aby użyć środowiska konieczne jest zainstalowanie następujących bibliotek: `pygame` , `cppyy` i `gym`.
