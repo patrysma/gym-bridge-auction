@@ -1,5 +1,4 @@
-# gym_bridge_auction
-Środowisko do licytacji brydżowej
+# Środowisko do licytacji brydżowej
 
 Działanie środowiska przetestowano w systemie Linux.
 
@@ -36,3 +35,7 @@ for i_episode in range(5):
 
 env.close()
 ```
+
+Działanie opcji z interfejsem graficznym:
+
+[![Watch the video](https://img.youtube.com/vi/DybSAue5bYY/maxresdefault.jpg)](https://www.youtube.com/watch?v=DybSAue5bYY&feature=youtu.be)
