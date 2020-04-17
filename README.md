@@ -13,7 +13,7 @@ Poszczególne liczby oznaczają różne odzywki licytacyjne. Przestrzeń akcji z
 | Liczba | Działanie |
 | ------ | --------- |
 | 0 | pass |
-1       7NT
+| 1    |   7NT |
 2       7S
 3       7H
 4       7D
