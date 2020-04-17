@@ -11,7 +11,6 @@ Aby przetestować działanie środowiska w wersji konsolowej można użyć poni�
 ```python
 import gym
 import gym_bridge_auction
-import pygame
 
 env = gym.make('BridgeAuction-v0')
 
