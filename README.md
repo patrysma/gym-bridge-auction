@@ -4,7 +4,11 @@
 
 W tym środowisku agenci wykonują kolejno pojedyńcze akcje (licytują). Dlatego funkcja `step()` przyjmuje tylko jedno działanie agenta, który zgodnie z ustaloną kolejnością powinien licytować i zwraca jedną obserwację, nagrodę i informację czy należy zresetować środowisko (czy otrzymano 3 pasy po kolei, czyli zakończono licytację). 
 
-Przestarzeń akcji zdefiniowano następująco: ```python spaces.Discrete(36)```. Gdzie poszczególne liczby oznaczają odzywki l
+Przestarzeń akcji zdefiniowano następująco: 
+```python 
+spaces.Discrete(36)
+``` 
+Poszczególne liczby oznaczają odzywki licytacyjne.
 
 Działanie środowiska przetestowano w systemie Linux.
 
