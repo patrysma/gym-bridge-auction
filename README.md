@@ -13,18 +13,18 @@ Poszczególne liczby oznaczają różne odzywki licytacyjne. Przestrzeń akcji z
 | Liczba | Działanie |
 | ------ | --------- |
 | 0 | pass |
-| 1    |   7NT |
-2       7S
-3       7H
-4       7D
-5       7C
-.       .
-.       .
-31      1NT
-32      1S
-33      1H
-34      1D
-35      1C
+| 1 | 7NT |
+| 2 |  7S |
+| 3 | 7H |
+| 4 | 7D |
+| 5 | 7C |
+| . | . |
+| . | . |
+| 31 | 1NT |
+| 32 | 1S |
+| 33 | 1H |
+| 34 | 1D |
+| 35 | 1C |
 
 Działanie środowiska przetestowano w systemie Linux.
 
