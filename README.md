@@ -9,7 +9,7 @@ Należy również przekopiować następujące pliki: `libdds.so` i `libddswrappe
 
 Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`.
 
-```
+```python
 import gym
 import gym_bridge_auction
 import pygame
