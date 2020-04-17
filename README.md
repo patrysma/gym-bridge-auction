@@ -38,7 +38,7 @@ spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
              'WEST_contract': spaces.Discrete(36),
              'winning_pair': spaces.Discrete(self.n_players / 2)})
 ```
--Stan 'whose turn' oznacza kto licytował. Oznaczenia poszczególnych liczb przedstawiono poniżej.
+- Stan 'whose turn' oznacza kto licytował. Oznaczenia poszczególnych liczb przedstawiono poniżej.
 
 | Liczba | Nazwa gracza |
 | ------ | ------------ |
@@ -47,7 +47,16 @@ spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
 | 2 | S |
 | 3 | W |
 
--Stan 'whose next turn' oznacza gracza, który następny w kolejności ma licytować. Oznaczenia liczb zgodne ze stanem 'whose turn'.
+- Stan 'whose next turn' oznacza gracza, który następny w kolejności ma licytować. Oznaczenia liczb zgodne ze stanem 'whose turn'.
+- Stan 'LAST_contract' oznacza ostateczny kontrakt po każdym z kroków. Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji.
+- Stany 'NORTH_contract', 'EAST_contract', 'SOUTH_contract', 'WEST_contract' są to odzywki poszczególnych graczy. Zmieniają się one, gdy odpowiedni gracz zalicytuje. Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji.
+- Stan 'winning_pair' oznacza która z par graczy ma w danym kroku najwyższy kontrakt. Oznaczenia liczb są następujące:
+
+| Liczba | Nazwa pary |
+| ------ | ---------- |
+| 0 | N/S |
+| 1 | E/W |
+
 
 Działanie środowiska przetestowano w systemie Linux.
 
