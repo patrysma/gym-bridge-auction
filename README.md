@@ -30,14 +30,24 @@ Przestrzeń obserwacji zdefiniowano następująco:
 
 ```python
 spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
-                                              'whose next turn': spaces.Discrete(self.n_players),
-                                              'LAST_contract': spaces.Discrete(36),
-                                              'NORTH_contract': spaces.Discrete(36),
-                                              'EAST_contract': spaces.Discrete(36),
-                                              'SOUTH_contract': spaces.Discrete(36),
-                                              'WEST_contract': spaces.Discrete(36),
-                                              'winning_pair': spaces.Discrete(self.n_players / 2)})
+             'whose next turn': spaces.Discrete(self.n_players),
+             'LAST_contract': spaces.Discrete(36),
+             'NORTH_contract': spaces.Discrete(36),
+             'EAST_contract': spaces.Discrete(36),
+             'SOUTH_contract': spaces.Discrete(36),
+             'WEST_contract': spaces.Discrete(36),
+             'winning_pair': spaces.Discrete(self.n_players / 2)})
 ```
+-Stan 'whose turn' oznacza kto licytował. Oznaczenia poszczególnych liczb przedstawiono poniżej.
+
+| Liczba | Nazwa gracza |
+| ------ | ------------ |
+| 0 | N |
+| 1 | E |
+| 2 | S |
+| 3 | W |
+
+-Stan 'whose next turn' oznacza gracza, który następny w kolejności ma licytować. Oznaczenia liczb zgodne ze stanem 'whose turn'.
 
 Działanie środowiska przetestowano w systemie Linux.
 
