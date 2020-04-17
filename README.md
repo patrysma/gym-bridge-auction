@@ -38,4 +38,6 @@ env.close()
 
 Działanie opcji z interfejsem graficznym:
 
+<p align="center">
 [![Watch the video](https://i.imgur.com/058RZlw.jpg)](https://youtu.be/DybSAue5bYY)
+</p>
