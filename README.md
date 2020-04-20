@@ -64,7 +64,7 @@ Aby użyć środowiska konieczne jest zainstalowanie następujących bibliotek: 
 
 Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` w swoim systemie.
 
-Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`.
+Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów.
 
 ```python
 import gym
@@ -93,14 +93,31 @@ for i_episode in range(5):
 env.close()
 ```
 
-# Działanie opcji z interfejsem graficznym:
+# Działanie opcji z interfejsem graficznym (losowe działania agentów):
 
 [![Watch the video](https://i.imgur.com/058RZlw.jpg)](https://youtu.be/DybSAue5bYY) 
 
-Poniżej przedstawiono wartości nagrody i przestrzeń obserwacji dla powyższego działania:
+Poniżej przedstawiono wartości nagrody i przestrzeń obserwacji dla powyższego działania.
+
+Pierwszy epizod:
 
 ![](https://i.imgur.com/xjHfLgG.png)
 
+Drugi epizod:
+
+![](https://i.imgur.com/CpIZAhO.png)
+
+Trzeci epizod:
+
+![](https://i.imgur.com/FCbUaGY.png)
+
+Czwarty epizod:
+
+![](https://i.imgur.com/tiaCvMU.png)
+
+Piąty epizod:
+
+![](https://i.imgur.com/YvynWKu.png)
 
 
 # Algorytm wyznaczenia nagrody
