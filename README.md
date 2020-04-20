@@ -95,7 +95,13 @@ env.close()
 
 # Działanie opcji z interfejsem graficznym:
 
-[![Watch the video](https://i.imgur.com/058RZlw.jpg)](https://youtu.be/DybSAue5bYY)  
+[![Watch the video](https://i.imgur.com/058RZlw.jpg)](https://youtu.be/DybSAue5bYY) 
+
+Poniżej przedstawiono wartości nagrody i przestrzeń obserwacji dla powyższego działania:
+
+![](https://i.imgur.com/xjHfLgG.png)
+
+
 
 # Algorytm wyznaczenia nagrody
 
