@@ -120,27 +120,29 @@ Jeśli kontrakt jest różny od pasu:
       Jeśli kontrakt jest równy najbardziej punktowanemu:
         nagroda = nagroda + bonus
 ```
+Implementacja funkcji nagrody jest następująca:
 
-
+```python
 if action == 0:
-            self.reward = 0
-        else:
-            bind_trump = self.available_contracts[action].suit
-            bind_number = self.available_contracts[action].number
-            max_contract = self.players[player_index].makeable_contracts[bind_trump]
-            max_number_of_tricks = self.players[player_index].number_of_trick[bind_trump]
+    self.reward = 0
+else:
+    bind_trump = self.available_contracts[action].suit
+    bind_number = self.available_contracts[action].number
+    max_contract = self.players[player_index].makeable_contracts[bind_trump]
+    max_number_of_tricks = self.players[player_index].number_of_trick[bind_trump]
 
-            if max_contract == 0:
-                self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
+    if max_contract == 0:
+        self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
+    else:
+        if bind_number > max_contract:
+            self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
+        elif bind_number <= max_contract:
+            if bind_trump == 'NT':
+                self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
             else:
-                if bind_number > max_contract:
-                    self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
-                elif bind_number <= max_contract:
-                    if bind_trump == 'NT':
-                        self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
-                    else:
-                        self.reward = POINTS[bind_trump] * bind_number
+                self.reward = POINTS[bind_trump] * bind_number
 
-                    if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
-                        self.reward += POINTS['BONUS']
+            if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
+                self.reward += POINTS['BONUS']
+```
 
