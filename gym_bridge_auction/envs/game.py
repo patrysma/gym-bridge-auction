@@ -12,6 +12,8 @@ NAMES = ['N', 'E', 'S', 'W']
 # miana odzywki
 BIND_SUIT = ['C', 'D', 'H', 'S', 'NT']
 
+WIN_PAIR = [(0, 2), (1, 3)]
+
 
 class Contract:
     """Klasa definiująca poszczególne kontrakty licytacji brydżowej -

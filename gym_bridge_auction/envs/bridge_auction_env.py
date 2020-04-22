@@ -4,6 +4,7 @@ from gym_bridge_auction.envs.render import *
 import random
 import time
 from gym_bridge_auction.envs.solver_results import *
+from gym_bridge_auction.envs.dynamic_space import Dynamic
 
 
 class AuctionEnv(gym.Env):
@@ -24,15 +25,16 @@ class AuctionEnv(gym.Env):
                                               'EAST_contract': spaces.Discrete(36),
                                               'SOUTH_contract': spaces.Discrete(36),
                                               'WEST_contract': spaces.Discrete(36),
-                                              'winning_pair': spaces.Discrete(self.n_players / 2)})
-        self.action_space = spaces.Discrete(36)  # przestrzeń dostępnych działań agenta
+                                              'winning_pair': spaces.Discrete(self.n_players / 2),
+                                              'double/redouble': spaces.Discrete(3)})
+        self.action_space = Dynamic(38)  # przestrzeń dostępnych działań agenta
+        print(self.action_space.available_actions)
 
         self.dealer_name = ''  # Nazwa gracza, który to rozdający
         self.index_order = None  # indeks aktualnie licytującego gracza (z listy graczy w odpowiedniej kolejności)
         self.players_order = []  # lista graczy ustawionych w odpowiedniej kolejności licytowania
         self.last_contract = None  # ustalony kontrakt
         self.first_bind_pass = False  # czy pierwsza odzywka była pasem
-        # self.state = {}
 
         # Utworzenie dostępnych kontraktów (lista obiektów typu Contract)
         self.available_contracts = self.create_available_contracts()
@@ -50,23 +52,28 @@ class AuctionEnv(gym.Env):
         self.reward = None
         self.pass_number = 0
         self.insert_solver_results()  # wstawienie wyników z solvera dla poszczególnych graczy
-        self.reset()
+        self.double = False  # czy była kontra
+        self.redouble = False  # czy była rekontra
+        self.state = {}
+        self.state = self.reset()
 
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
         # state = {}
-        if action != 0:  # zmniejaszanie się dostępnych odzywek licytacyjnych
-            self.action_space.n = action
 
-        state = self.get_game_state(action, False)
-        self.get_reward(action, state['whose turn'])
+        self.state = self.get_game_state(action, False, self.state)
+        self.get_reward(action, self.state['whose turn'])
         self.index_order += 1
 
         if self.index_order == 4:
             self.index_order = 0
         done = self.is_over(action)
 
-        return state, self.reward, done, {}
+        # wyznaczenie dostępnych działań z przestrzeni akcji
+        self.action_space.set_available_actions(action, self.state)
+        print(self.action_space.available_actions)
+
+        return self.state, self.reward, done, {}
 
     def reset(self):
         self.reward = None
@@ -74,10 +81,13 @@ class AuctionEnv(gym.Env):
         self.pass_number = 0
         self.index_order = 0
         self.first_bind_pass = False
-        self.action_space.n = 36
-        return self.get_game_state(None, True)
+        self.double = False
+        self.redouble = False
+        self.action_space.new_n = 36
+        self.action_space.available_actions = list(range(0, 36))
+        return self.get_game_state(None, True, self.state)
 
-    def render(self, mode='console'):
+    def render(self, mode='human'):
 
         if mode == 'human':
 
@@ -87,7 +97,13 @@ class AuctionEnv(gym.Env):
                 self.viewer = True
 
             else:
-                self._win.update_view(self.last_contract.__str__(), self.players[0].player_contracts.__str__(),
+                if self.double:
+                    last_contract = self.last_contract.__str__() + 'X'
+                elif self.redouble:
+                    last_contract = self.last_contract.__str__() + 'XX'
+                else:
+                    last_contract = self.last_contract.__str__()
+                self._win.update_view(last_contract, self.players[0].player_contracts.__str__(),
                                       self.players[1].player_contracts.__str__(),
                                       self.players[2].player_contracts.__str__(),
                                       self.players[3].player_contracts.__str__(),
@@ -111,7 +127,12 @@ class AuctionEnv(gym.Env):
 
             else:
                 print('')
-                print('LAST_contract: ' + self.last_contract.__str__())
+                if self.double:
+                    print('LAST_contract: ' + self.last_contract.__str__() + ' X')
+                elif self.redouble:
+                    print('LAST_contract: ' + self.last_contract.__str__() + ' XX')
+                else:
+                    print('LAST_contract: ' + self.last_contract.__str__())
                 print('NORTH_contract: ' + self.players[0].player_contracts.__str__())
                 print('EAST_contract: ' + self.players[1].player_contracts.__str__())
                 print('SOUTH_contract: ' + self.players[2].player_contracts.__str__())
@@ -182,6 +203,8 @@ class AuctionEnv(gym.Env):
         contracts = [Contract(i, j) for j in numbers for i in BIND_SUIT]
         contracts.reverse()
         contracts.insert(0, Contract('pass', None))
+        contracts.append(Contract('double', None))
+        contracts.append(Contract('redouble', None))
 
         for i in range(0, len(contracts)):
             contracts[i].value = i
@@ -204,10 +227,10 @@ class AuctionEnv(gym.Env):
             for i in range(0, dealer):
                 self.players_order.append(self.players[i])
 
-    def get_game_state(self, action, reset):
+    def get_game_state(self, action, reset, state):
         """Wyznaczenie przestrzeni obserwacji"""
 
-        state = {}
+        #state = {}
 
         # przestrzeń obserwacji dla funkcji reset
         if reset:
@@ -223,6 +246,7 @@ class AuctionEnv(gym.Env):
             state['SOUTH_contract'] = None
             state['WEST_contract'] = None
             state['winning_pair'] = None
+            state['double/redouble'] = 0
             self.last_contract = None
 
         else:
@@ -235,48 +259,58 @@ class AuctionEnv(gym.Env):
             else:
                 state['whose next turn'] = player_index + 1
 
-            if (self.last_contract is None) and (action == 0):
-                # jak ostatni kontrakt jest pusty i pierwszy jest pass
-                self.first_bind_pass = True
+            if self.last_contract is None:
+                # jak jest początek licytacji
                 state['LAST_contract'] = action
                 self.last_contract = self.available_contracts[action]
+
+                if action == 0:
+                    self.first_bind_pass = True
+                    self.players[player_index].win_auction = False
+                else:
+                    self.players[player_index].win_auction = True
+
+            elif (action < self.last_contract.value or self.last_contract.value == 0) and action != 0:
+                #  jeśli działanie to nie kontra/rekontra/pas lub wszycy gracze od początku licytacji spasowali
+                #  i obecne działanie nie jest pasem
+
+                state['LAST_contract'] = action
+                self.last_contract = self.available_contracts[action]
+                self.first_bind_pass = False
 
                 for i in range(0, len(self.players)):
                     self.players[i].win_auction = False
 
                 self.players[player_index].win_auction = True
 
-            elif (self.last_contract is None) and (action != 0):
+                if state['double/redouble'] == 1:
+                    state['double/redouble'] = 0
+                    self.double = False
+                elif state['double/redouble'] == 2:
+                    state['double/redouble'] = 0
+                    self.redouble = False
 
-                state['LAST_contract'] = action
-                self.last_contract = self.available_contracts[action]
-
-                for i in range(0, len(self.players)):
-                    self.players[i].win_auction = False
-
-                self.players[player_index].win_auction = True
-
-            if action < self.last_contract.value and action != 0:
-                state['LAST_contract'] = action
-                self.last_contract = self.available_contracts[action]
-
-                for i in range(0, len(self.players)):
-                    self.players[i].win_auction = False
-
-                self.players[player_index].win_auction = True
-
-            elif action == 0:
-                state['LAST_contract'] = self.last_contract.value
-                self.last_contract = self.last_contract
             else:
+                # jeśli działanie to kontra/rekontra/pas
                 state['LAST_contract'] = self.last_contract.value
-                self.last_contract = self.last_contract
+
+                if action == 36:
+                    # jeśli kontra
+                    state['double/redouble'] = 1
+                    self.double = True
+                    self.first_bind_pass = False
+                elif action == 37:
+                    # jeśli rekontra
+                    state['double/redouble'] = 2
+                    self.redouble = True
+                    self.double = False
+                    self.first_bind_pass = False
 
             self.players[player_index].player_contracts = self.available_contracts[action]
 
             for player in self.players:
                 if player.win_auction is True:
-                    if (self.players.index(player) == 0) or (self.players.index(player) == 2):
+                    if self.players.index(player) in WIN_PAIR[0]:
                         state['winning_pair'] = 0
                     else:
                         state['winning_pair'] = 1
@@ -297,28 +331,28 @@ class AuctionEnv(gym.Env):
 
         if action == 0:
             self.reward = 0
+        elif action == 36 or action == 37:
+            self.reward = 1000
         else:
             bind_trump = self.available_contracts[action].suit
             bind_number = self.available_contracts[action].number
             max_contract = self.players[player_index].makeable_contracts[bind_trump]
             max_number_of_tricks = self.players[player_index].number_of_trick[bind_trump]
 
-            if max_contract == 0:
-                self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
-            else:
-                if bind_number > max_contract:
-                    self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
-                elif bind_number <= max_contract:
-                    if bind_trump == 'NT':
-                        self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
-                    else:
-                        self.reward = POINTS[bind_trump] * bind_number
+            if bind_number <= max_contract:
+                if bind_trump == 'NT':
+                    self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
+                else:
+                    self.reward = POINTS[bind_trump] * bind_number
 
-                    if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
-                        self.reward += POINTS['BONUS']
+                if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
+                    self.reward += POINTS['BONUS']
+
+            else:
+                self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
 
     def is_over(self, action):
-        """Wyznaczenie warunku końca licytacji - po 3 pasach z rzędu"""
+        """Wyznaczenie warunku końca licytacji - po 3 pasach z rzędu lub gdy nikt nie zadeklarował żadnego kontraktu"""
 
         if action == 0:
             self.pass_number += 1
