@@ -30,7 +30,7 @@ class Dynamic(spaces.Discrete):
 
         self.available_actions = list(range(0, self.new_n))
 
-        if state['LAST_contract'] != 0 and state['LAST_contract'] != None and state['double/redouble'] == 0 and not (state['whose next turn'] in WIN_PAIR[state['winning_pair']]):
+        if  (not state['winning_pair'] is None) and state['double/redouble'] == 0 and not (state['whose next turn'] in WIN_PAIR[state['winning_pair']]):
             # dostępna kontra
             self.available_actions.append(36)
 
