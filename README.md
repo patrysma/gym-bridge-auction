@@ -6,9 +6,9 @@ W tym środowisku agenci wykonują kolejno pojedyńcze akcje (licytują). Dlateg
 
 Przestarzeń akcji zdefiniowano następująco: 
 ```python 
-spaces.Discrete(36)
+spaces.Dynamic(38)
 ``` 
-Poszczególne liczby oznaczają różne odzywki licytacyjne. Przestrzeń akcji zmniejsza się (gdy agenci nie pasują) w każdym kroku i zawiera odzywki wyższe od ostatniej wypowiedzianej. Oznaczenia przedstawiono poniżej.
+Poszczególne liczby oznaczają różne odzywki licytacyjne oraz zapowiedzi: pas, kontra, rekontra. Przestrzeń akcji zmniejsza się (gdy agenci nie pasują, bądź nie kontrują i nie rekontrują) w każdym kroku o odzywki niższe od ostatniej wypowiedzianej.  Dodatkowo dostępna są zapowiedzi kontra i rekontra. Kontra dostępna jest dla przeciwników pary, która zgłosiła ostatnią odzywkę. Natomiast rekontra pojawia się dla pary z najwyższą obecnie zgłoszoną odzywką po kontrze przeciwników. Tak zmieniającą się przestrzeń akcji zapewnia zdefiniowana klasa `Dynamic` dziedzicząca po `Discrete`.  Oznaczenia przedstawiono poniżej.
 
 | Liczba | Działanie |
 | ------ | --------- |
@@ -25,6 +25,8 @@ Poszczególne liczby oznaczają różne odzywki licytacyjne. Przestrzeń akcji z
 | 33 | 1H |
 | 34 | 1D |
 | 35 | 1C |
+| 36 | double |
+| 37 | redouble |
 
 Przestrzeń obserwacji zdefiniowano następująco:
 
@@ -36,7 +38,8 @@ spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
              'EAST_contract': spaces.Discrete(36),
              'SOUTH_contract': spaces.Discrete(36),
              'WEST_contract': spaces.Discrete(36),
-             'winning_pair': spaces.Discrete(self.n_players / 2)})
+             'winning_pair': spaces.Discrete(self.n_players / 2),
+             'double/redouble': spaces.Discrete(3)})
 ```
 - Stan 'whose turn' oznacza kto licytował. Oznaczenia poszczególnych liczb przedstawiono poniżej.
 
@@ -57,12 +60,19 @@ spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
 | 0 | N/S |
 | 1 | E/W |
 
+- Stan 'double/redouble' oznacza czy wystąpiła kontra, rekontra lub żadne z nich. Oznaczenia przedstawiono poniżej.
+
+| Liczba | Działanie |
+| ------ | ---------- |
+| 0 | no double/redouble |
+| 1 | double - 'X' |
+| 2 | redouble - 'XX' |
 
 Działanie środowiska przetestowano w systemie Linux.
 
 Aby użyć środowiska konieczne jest zainstalowanie następujących bibliotek: `pygame` , `cppyy` i `gym`.
 
-Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` w swoim systemie.
+Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` w swoim systemie, aby zaintalować biblioteki. Można to zrobić w następujący sposób
 
 Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów.
 
@@ -119,6 +129,76 @@ Piąty epizod:
 
 ![](https://i.imgur.com/YvynWKu.png)
 
+# Działanie z kontrą i rekontrą
+
+Poniżej przedstawiono wartości nagrody i przestrzeń obserwacji dla powyższego działania.
+
+Pierwszy epizod:
+
+```
+Observation space:
+{'whose turn': None, 'whose next turn': 3, 'LAST_contract': None, 'NORTH_contract': None, 'EAST_contract': None, 'SOUTH_contract': None, 'WEST_contract': None, 'winning_pair': None, 'double/redouble': 0}
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 14, 'double/redouble': 0, 'winning_pair': 1, 'WEST_contract': 14}
+Reward: -300
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 7, 'double/redouble': 0, 'winning_pair': 0, 'NORTH_contract': 7}
+Reward: -450
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 7, 'double/redouble': 1, 'winning_pair': 0, 'EAST_contract': 36}
+Reward: 1000
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 7, 'double/redouble': 1, 'winning_pair': 0, 'SOUTH_contract': 0}
+Reward: 0
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 6, 'double/redouble': 0, 'winning_pair': 1, 'WEST_contract': 6}
+Reward: -200
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 4, 'double/redouble': 0, 'winning_pair': 0, 'NORTH_contract': 4}
+Reward: -300
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 4, 'double/redouble': 1, 'winning_pair': 0, 'EAST_contract': 36}
+Reward: 1000
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 2, 'double/redouble': 0, 'winning_pair': 0, 'SOUTH_contract': 2}
+Reward: -500
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'WEST_contract': 1}
+Reward: -250
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'NORTH_contract': 0}
+Reward: 0
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'EAST_contract': 0}
+Reward: 0
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'SOUTH_contract': 0}
+Reward: 0
+Episode finished after 12 timesteps
+```
+
+Drugi epizod:
+
+```
+Observation space:
+{'whose turn': None, 'whose next turn': 3, 'LAST_contract': None, 'NORTH_contract': None, 'EAST_contract': None, 'SOUTH_contract': None, 'WEST_contract': None, 'winning_pair': None, 'double/redouble': 0}
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 17, 'double/redouble': 0, 'winning_pair': 1, 'WEST_contract': 17}
+Reward: -50
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 2, 'double/redouble': 0, 'winning_pair': 0, 'NORTH_contract': 2}
+Reward: -500
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'EAST_contract': 1}
+Reward: -250
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 1, 'winning_pair': 1, 'SOUTH_contract': 36}
+Reward: 1000
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 2, 'winning_pair': 1, 'WEST_contract': 37}
+Reward: 1000
+Episode finished after 5 timesteps
+```
 
 # Algorytm wyznaczenia nagrody
 
