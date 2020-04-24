@@ -74,11 +74,13 @@ Aby użyć środowiska konieczne jest zainstalowanie następujących bibliotek: 
 
 Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` w swoim systemie, aby zaintalować biblioteki konieczne do użycia Double Dummy Solver. Można to zrobić w następujący sposób:
 
-`sudo cp /home/patrycja/PycharmProjects/gym_bridge_auction/gym_bridge_auction/envs/solver/dds_wrapper/libddswrapper.so /usr/lib`
+```
+sudo cp /home/patrycja/PycharmProjects/gym_bridge_auction/gym_bridge_auction/envs/solver/dds_wrapper/libddswrapper.so /usr/lib
 
-`sudo ldconfig`
+sudo ldconfig
 
-`ldconfig -p|grep ddswrapper`
+ldconfig -p|grep ddswrapper
+```
 
 Podczas kopiowania podajemy odpowiednią ścieżkę występowania pliku.
 
