@@ -203,8 +203,6 @@ Jeśli kontrakt jest różny od pasu:
   Jeśli kontrakt jest nierealizowalny według solvera:
     nagroda = mnożnik_kary * (dek_licz_lew - maks_dek_licz_lew)
   Jeśli kontrakt jest realizowalny:
-    Jeśli dek_licz_lew > maks_dek_licz_lew:
-      nagroda = mnożnik_kary * (dek_licz_lew - maks_dek_licz_lew)
     Jeśli dek_licz_lew <= maks_dek_licz_lew:
       nagroda = mnożnik_koloru * (dek_licz_lew - maks_dek_licz_lew)
       Jeśli kontrakt jest równy najbardziej punktowanemu:
@@ -223,16 +221,13 @@ else:
 
     if max_contract == 0:
         self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
-    else:
-        if bind_number > max_contract:
-            self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
-        elif bind_number <= max_contract:
-            if bind_trump == 'NT':
-                self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
-            else:
-                self.reward = POINTS[bind_trump] * bind_number
+    elif bind_number <= max_contract:
+        if bind_trump == 'NT':
+            self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
+        else:
+            self.reward = POINTS[bind_trump] * bind_number
 
-            if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
-                self.reward += POINTS['BONUS']
+        if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
+            self.reward += POINTS['BONUS']
 ```
 
