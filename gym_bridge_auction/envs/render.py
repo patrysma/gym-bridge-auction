@@ -160,4 +160,5 @@ class Window:
     def close_window(self):
         """Metoda zamykająca okno i kończąca program"""
         pygame.quit()
-        quit()
+        
+

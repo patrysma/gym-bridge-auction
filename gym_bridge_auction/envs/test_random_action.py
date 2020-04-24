@@ -1,6 +1,7 @@
 import gym
 import gym_bridge_auction
 
+
 env = gym.make('BridgeAuction-v0')
 
 for i_episode in range(2):

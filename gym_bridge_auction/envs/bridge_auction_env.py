@@ -28,7 +28,6 @@ class AuctionEnv(gym.Env):
                                               'winning_pair': spaces.Discrete(self.n_players / 2),
                                               'double/redouble': spaces.Discrete(3)})
         self.action_space = Dynamic(38)  # przestrzeń dostępnych działań agenta
-        print(self.action_space.available_actions)
 
         self.dealer_name = ''  # Nazwa gracza, który to rozdający
         self.index_order = None  # indeks aktualnie licytującego gracza (z listy graczy w odpowiedniej kolejności)
@@ -69,7 +68,6 @@ class AuctionEnv(gym.Env):
 
         # wyznaczenie dostępnych działań z przestrzeni akcji
         self.action_space.set_available_actions(action, state)
-        print(self.action_space.available_actions)
 
         return state, self.reward, done, {}
 
@@ -142,16 +140,14 @@ class AuctionEnv(gym.Env):
     def close(self):
         if self.viewer is True:
             # jak mode == 'human'
-            self._win.close_window()
             self.viewer = None
-            quit()
+            self._win.close_window()
         elif self.viewer is False:
             # jak mode == 'console'
             self.viewer = None
-            quit()
         else:
             self.viewer = None
-            quit()
+            
 
     def pbn_deal_representation(self):
         """Dane rozdanie w formacie PBN"""
