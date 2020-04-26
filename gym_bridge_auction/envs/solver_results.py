@@ -2,7 +2,9 @@ from gym_bridge_auction.envs.game import *
 
 # wartości punktowe z zapisu brydżowego plus dodatkowe punkty wykorzystywane do wyznaczenia optymalnego kontraktu
 # i funkcji nagrody
-POINTS = {'C': 20, 'D': 20, 'H': 30, 'S': 30, 'NT': (40, 30), 'FAIL': -50, 'BONUS': 50}
+CONTRACT_POINTS = {'C': 20, 'D': 20, 'H': 30, 'S': 30, 'NT': (40, 30), 'X': 2, 'XX': 4}
+PENALTY_POINTS = {'NO DOUBLE/REDOUBLE': 50, 'DOUBLE': (100, 2), 'REDOUBLE': (200, 2)}
+BONUS = {'SLAM': 500, 'GRAND_SLAM': 1000, 'PARTIAL-GAME': 50, 'GAME': 300, 'DOUBLE': 50, 'REDOUBLE': 100}
 
 
 def get_results_from_solver(pbn):
@@ -51,15 +53,15 @@ def calc_point_for_contract(player_max_contract):
     """Funkcja wyliczająca ilość punktów jaką można zdobyć za ugrany dany kontrakt"""
 
     point_for_contracts = {}
-    point_for_contracts['C'] = POINTS['C'] * player_max_contract['C']
-    point_for_contracts['D'] = POINTS['D'] * player_max_contract['D']
-    point_for_contracts['H'] = POINTS['H'] * player_max_contract['H']
-    point_for_contracts['S'] = POINTS['S'] * player_max_contract['S']
+    point_for_contracts['C'] = CONTRACT_POINTS['C'] * player_max_contract['C']
+    point_for_contracts['D'] = CONTRACT_POINTS['D'] * player_max_contract['D']
+    point_for_contracts['H'] = CONTRACT_POINTS['H'] * player_max_contract['H']
+    point_for_contracts['S'] = CONTRACT_POINTS['S'] * player_max_contract['S']
 
     if player_max_contract['NT'] == 0:
         point_for_contracts['NT'] = 0
     else:
-        point_for_contracts['NT'] = POINTS['NT'][0] + (player_max_contract['NT'] - 1) * POINTS['NT'][1]
+        point_for_contracts['NT'] = CONTRACT_POINTS['NT'][0] + (player_max_contract['NT'] - 1) * CONTRACT_POINTS['NT'][1]
 
     return point_for_contracts
 

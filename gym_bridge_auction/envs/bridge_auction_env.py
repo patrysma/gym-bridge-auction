@@ -6,6 +6,10 @@ import time
 from gym_bridge_auction.envs.solver_results import *
 from gym_bridge_auction.envs.dynamic_space import Dynamic
 
+CONTRACT_POINTS = {'C': 20, 'D': 20, 'H': 30, 'S': 30, 'NT': (40, 30), 'X': 2, 'XX': 4}
+PENALTY_POINTS = {'NO DOUBLE/REDOUBLE': 50, 'DOUBLE': (100, 2), 'REDOUBLE': (200, 2)}
+BONUS = {'SLAM': 500, 'GRAND_SLAM': 1000, 'PARTIAL-GAME': 50, 'GAME': 300, 'DOUBLE': 50, 'REDOUBLE': 100}
+
 
 class AuctionEnv(gym.Env):
     metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 450}
@@ -48,7 +52,7 @@ class AuctionEnv(gym.Env):
                 self.players[j].hand_splitted[i] = self.players[j].hand_to_display(self.players[j].hand_splitted[i])
 
         self.choose_dealer_and_order()  # wybór rozdającego i kolejność licytacji
-        self.reward = None
+        self.reward = [0, 0]
         self.pass_number = 0
         self.insert_solver_results()  # wstawienie wyników z solvera dla poszczególnych graczy
         self.double = False  # czy była kontra
@@ -59,7 +63,7 @@ class AuctionEnv(gym.Env):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
 
         state = self.get_game_state(action, False)
-        self.get_reward(action, state['whose turn'])
+        self.get_reward(state)
         self.index_order += 1
 
         if self.index_order == 4:
@@ -72,7 +76,7 @@ class AuctionEnv(gym.Env):
         return state, self.reward, done, {}
 
     def reset(self):
-        self.reward = None
+        self.reward = [0, 0]
         self.viewer = None
         self.pass_number = 0
         self.index_order = 0
@@ -147,7 +151,6 @@ class AuctionEnv(gym.Env):
             self.viewer = None
         else:
             self.viewer = None
-            
 
     def pbn_deal_representation(self):
         """Dane rozdanie w formacie PBN"""
@@ -328,30 +331,73 @@ class AuctionEnv(gym.Env):
 
         return state
 
-    def get_reward(self, action, player_index):
+    def get_reward(self, state):
         """Wyznaczenie nagrody za wykonane działanie przez poszczególnego agenta"""
 
-        if action == 0:
-            self.reward = 0
-        elif action == 36 or action == 37:
-            self.reward = 1000
+        if self.last_contract.value == 0:
+            # przypadek gdy na początku licytacji (lub ewentualnie w dalszych krokach) zgłoszono pas
+            self.reward[0] = 0
+            self.reward[0] = 0
+
         else:
-            bind_trump = self.available_contracts[action].suit
-            bind_number = self.available_contracts[action].number
-            max_contract = self.players[player_index].makeable_contracts[bind_trump]
-            max_number_of_tricks = self.players[player_index].number_of_trick[bind_trump]
+            bind_trump = self.last_contract.suit
+            bind_number = self.last_contract.number
+            max_contract = self.players[state['winning_pair']].makeable_contracts[bind_trump]
+            max_number_of_tricks = self.players[state['winning_pair']].number_of_trick[bind_trump]
+            number_of_tricks = bind_number + 6
+            ind_w = state['winning_pair']
+            ind_p = None
+            trick_difference = number_of_tricks - max_number_of_tricks
+
+            for i in enumerate(WIN_PAIR):
+                if i[0] != ind_w:
+                    ind_p = i[0]
 
             if bind_number <= max_contract:
+                # kontrakt jest realizowalny
                 if bind_trump == 'NT':
-                    self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
+                    self.reward[ind_w] = CONTRACT_POINTS['NT'][0] + (bind_number - 1)*CONTRACT_POINTS['NT'][1]
                 else:
-                    self.reward = POINTS[bind_trump] * bind_number
+                    self.reward[ind_w] = bind_number * CONTRACT_POINTS[bind_trump]
 
-                if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
-                    self.reward += POINTS['BONUS']
+                if state['double/redouble'] == 1:
+                    self.reward[ind_w] *= CONTRACT_POINTS['X']
+                    self.reward[ind_w] += BONUS['DOUBLE']
+                elif state['double/redouble'] == 2:
+                    self.reward[ind_w] *= CONTRACT_POINTS['XX']
+                    self.reward[ind_w] += BONUS['REDOUBLE']
+
+                # premie za częściówki, dograne, szlemiki, szlemy
+                if self.reward[ind_w] < 100:
+                    self.reward[ind_w] += BONUS['PARTIAL-GAME']
+                else:
+                    self.reward[ind_w] += BONUS['GAME']
+
+                if bind_number == 6:
+                    self.reward[ind_w] += BONUS['SLAM']
+                elif bind_number == 7:
+                    self.reward[ind_w] += BONUS['GRAND_SLAM']
+
+                self.reward[ind_p] = -self.reward[ind_w]
 
             else:
-                self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
+                # kontrakt nie jest realizowalny
+                if state['double/redouble'] == 0:
+                    # nie było kontry lub rekontry
+                    self.reward[ind_p] = PENALTY_POINTS['NO DOUBLE/REDOUBLE']*trick_difference
+                elif state['double/redouble'] == 1:
+                    self.reward[ind_p] = PENALTY_POINTS['DOUBLE'][0] + \
+                                         PENALTY_POINTS['DOUBLE'][0]*PENALTY_POINTS['DOUBLE'][1]*(trick_difference - 1)
+                    if trick_difference >= 4:
+                        self.reward[ind_p] += PENALTY_POINTS['DOUBLE'][0]*(trick_difference - 3)
+                elif state['double/redouble'] == 2:
+                    self.reward[ind_p] = PENALTY_POINTS['REDOUBLE'][0] + \
+                                         PENALTY_POINTS['REDOUBLE'][0]*PENALTY_POINTS['REDOUBLE'][1]\
+                                         *(trick_difference - 1)
+                    if trick_difference >= 4:
+                        self.reward[ind_p] += PENALTY_POINTS['REDOUBLE'][0]*(trick_difference - 3)
+
+                self.reward[ind_w] = -self.reward[ind_p]
 
     def is_over(self, action):
         """Wyznaczenie warunku końca licytacji - po 3 pasach z rzędu lub gdy nikt nie zadeklarował żadnego kontraktu"""
