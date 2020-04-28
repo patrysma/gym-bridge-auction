@@ -21,6 +21,7 @@ class AuctionEnv(gym.Env):
         self.n_players = 4  # liczba graczy
         self.deck = Deck()  # utworzenie talii
         self.players = []  # lista graczy
+        self.reward_range = (-100, 100)
         # przestrzeń obserwacji
         self.observation_space = spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
                                               'whose next turn': spaces.Discrete(self.n_players),
@@ -190,7 +191,7 @@ class AuctionEnv(gym.Env):
             self.players[i].number_of_trick = get_solver_result_for_player(i, solver_results)
             self.players[i].makeable_contracts = max_contract_for_suit(self.players[i].number_of_trick)
             points_for_contracts = calc_point_for_contract(self.players[i].makeable_contracts)
-            self.players[i].max_contract_trump = choose_best_contracts(points_for_contracts)
+            self.players[i].max_contract_score = choose_best_contracts(points_for_contracts)
 
     @staticmethod
     def create_available_contracts():
@@ -352,6 +353,12 @@ class AuctionEnv(gym.Env):
             for i in enumerate(WIN_PAIR):
                 if i[0] != ind_w:
                     ind_p = i[0]
+                    
+            # maksymalne ilości punktów z zapisu dla danej pary
+            max_score_w = self.players[ind_w].max_contract_score
+            print(max_score_w)
+            max_score_p = self.players[ind_p].max_contract_score
+            print(max_score_p)
 
             if bind_number <= max_contract:
                 # kontrakt jest realizowalny
@@ -377,7 +384,8 @@ class AuctionEnv(gym.Env):
                     self.reward[ind_w] += BONUS['SLAM']
                 elif bind_number == 7:
                     self.reward[ind_w] += BONUS['GRAND_SLAM']
-
+                
+                self.reward[ind_w] = self.reward[ind_w]/max_score_w
                 self.reward[ind_p] = -self.reward[ind_w]
 
             else:
@@ -396,7 +404,8 @@ class AuctionEnv(gym.Env):
                                          *(trick_difference - 1)
                     if trick_difference >= 4:
                         self.reward[ind_p] += PENALTY_POINTS['REDOUBLE'][0]*(trick_difference - 3)
-
+                        
+                self.reward[ind_p] = self.reward[ind_p]/max_score_p
                 self.reward[ind_w] = -self.reward[ind_p]
 
     def is_over(self, action):

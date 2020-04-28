@@ -131,7 +131,7 @@ class Player:
         self.player_contracts = None  # odzywka danego gracza
         self.makeable_contracts = {}  # maksymalne realizowane kontrakty wyznaczone za pomocą solvera
         self.number_of_trick = {}  # maksymalna liczba wzięty lew wyznaczona za pomocą solvere
-        self.max_contract_trump = []  # miano najbardziej punktowanych kontraktów
+        self.max_contract_score = []  # wartość punktowa najbardziej punktowanego kontraktu
 
     def split_hand(self):
         """Metoda rodzielająca rękę gracza na poszczegolne kolory kart (od najstarszego do najmłodszego),

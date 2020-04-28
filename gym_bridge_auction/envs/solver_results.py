@@ -53,30 +53,37 @@ def calc_point_for_contract(player_max_contract):
     """Funkcja wyliczająca ilość punktów jaką można zdobyć za ugrany dany kontrakt"""
 
     point_for_contracts = {}
-    point_for_contracts['C'] = CONTRACT_POINTS['C'] * player_max_contract['C']
-    point_for_contracts['D'] = CONTRACT_POINTS['D'] * player_max_contract['D']
-    point_for_contracts['H'] = CONTRACT_POINTS['H'] * player_max_contract['H']
-    point_for_contracts['S'] = CONTRACT_POINTS['S'] * player_max_contract['S']
+    
+    # punkty kontraktowe
+    for i in range(0, len(BIND_SUIT) - 1):
+        point_for_contracts[BIND_SUIT[i]] = CONTRACT_POINTS[BIND_SUIT[i]] * player_max_contract[BIND_SUIT[i]]
 
     if player_max_contract['NT'] == 0:
         point_for_contracts['NT'] = 0
     else:
         point_for_contracts['NT'] = CONTRACT_POINTS['NT'][0] + (player_max_contract['NT'] - 1) * CONTRACT_POINTS['NT'][1]
+        
+    # punkty za częściówki, dograne i szlemy i szlemiki
+    for i in range(0, len(BIND_SUIT)):
+        if point_for_contracts[BIND_SUIT[i]] != 0:
+            if point_for_contracts[BIND_SUIT[i]] < 100:
+                point_for_contracts[BIND_SUIT[i]] += BONUS['PARTIAL-GAME']
+            else:
+                point_for_contracts[BIND_SUIT[i]] += BONUS['GAME']
+
+            if player_max_contract[BIND_SUIT[i]] == 6:
+                point_for_contracts[BIND_SUIT[i]] += BONUS['SLAM']
+            elif player_max_contract[BIND_SUIT[i]] == 7:
+                point_for_contracts[BIND_SUIT[i]] += BONUS['GRAND_SLAM']
 
     return point_for_contracts
 
 
 def choose_best_contracts(point_for_contracts):
-    """Funkcja wybierająca najbardziej punktowane miano kontraktu dla danego gracza"""
+    """Funkcja wybierająca najbardziej punktowane kontrakt dla danego gracza"""
 
-    best_contracts_colours = []
     values_list = list(point_for_contracts.values())
-    keys_list = list(point_for_contracts.keys())
     max_value = max(values_list)
 
-    for element in enumerate(values_list):
-        if element[1] == max_value:
-            best_contracts_colours.append(keys_list[element[0]])
-
-    return best_contracts_colours
+    return max_value
 
