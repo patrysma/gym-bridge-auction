@@ -116,7 +116,7 @@ env.close()
 
 # Działanie z kontrą i rekontrą
 
-[![Watch the video](https://i9.ytimg.com/vi/zd-wa3wE75I/mq2.jpg?sqp=CMb4jPUF&rs=AOn4CLAkRsi6P8xcQ5FzszBpHBRazmbwGA)](https://youtu.be/zd-wa3wE75I)
+[![Watch the video](https://i.imgur.com/aTB0rmc.jpg)](https://youtu.be/zd-wa3wE75I)
 
 Poniżej przedstawiono wartości nagrody i przestrzeń obserwacji dla powyższego działania.
 
