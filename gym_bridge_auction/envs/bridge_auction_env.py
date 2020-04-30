@@ -31,7 +31,10 @@ class AuctionEnv(gym.Env):
                                               'SOUTH_contract': spaces.Discrete(36),
                                               'WEST_contract': spaces.Discrete(36),
                                               'winning_pair': spaces.Discrete(self.n_players / 2),
-                                              'double/redouble': spaces.Discrete(3)})
+                                              'double/redouble': spaces.Discrete(3),
+                                              'Players hand': spaces.Tuple(
+                                                  [spaces.MultiDiscrete([2 for _ in range(0, len(self.deck.deck))])
+                                                   for _ in range(0, self.n_players)])})
         self.action_space = Dynamic(38)  # przestrzeń dostępnych działań agenta
 
         self.dealer_name = ''  # Nazwa gracza, który to rozdający
@@ -246,6 +249,10 @@ class AuctionEnv(gym.Env):
             state['winning_pair'] = None
             state['double/redouble'] = 0
             self.last_contract = None
+            state['Players hand'] = [[] for _ in range(0, self.n_players)]
+
+            for player in enumerate(self.players):
+                state['Players hand'][player[0]] = player[1].hand_representation
 
         else:
 
@@ -353,7 +360,7 @@ class AuctionEnv(gym.Env):
             for i in enumerate(WIN_PAIR):
                 if i[0] != ind_w:
                     ind_p = i[0]
-                    
+
             # maksymalne ilości punktów z zapisu dla danej pary
             max_score_w = self.players[ind_w].max_contract_score
             print(max_score_w)
@@ -384,8 +391,8 @@ class AuctionEnv(gym.Env):
                     self.reward[ind_w] += BONUS['SLAM']
                 elif bind_number == 7:
                     self.reward[ind_w] += BONUS['GRAND_SLAM']
-                
-                self.reward[ind_w] = self.reward[ind_w]/max_score_w
+
+                #self.reward[ind_w] = self.reward[ind_w]/max_score_w
                 self.reward[ind_p] = -self.reward[ind_w]
 
             else:
@@ -404,8 +411,8 @@ class AuctionEnv(gym.Env):
                                          *(trick_difference - 1)
                     if trick_difference >= 4:
                         self.reward[ind_p] += PENALTY_POINTS['REDOUBLE'][0]*(trick_difference - 3)
-                        
-                self.reward[ind_p] = self.reward[ind_p]/max_score_p
+
+                #self.reward[ind_p] = self.reward[ind_p]/max_score_p
                 self.reward[ind_w] = -self.reward[ind_p]
 
     def is_over(self, action):

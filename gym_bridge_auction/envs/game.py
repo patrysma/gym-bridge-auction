@@ -52,11 +52,12 @@ class Contract:
 class Card:
     """Klasa definiująca daną kartę do gry,
         gdzie:
-        suit - kolor danej karty - jeden z dostępnych czterech {♠, ♥, ♦, ♣} - kolejno od najmłodszego:
-        trefl, karo, kier, pik;
+        suit - kolor danej karty - jeden z dostępnych czterech {♠, ♥, ♦, ♣} - kolejno od najstarszego:
+        pik, kier, karo, trefl;
         rank - numer bądź figura danej karty - jedno z dostępnych (A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2) -
         kolejno od najstarszego;
-        value - liczba definiująca pozycję karty w hierarchii (liczby od 2 do 14)"""
+        value - liczba definiująca pozycję karty w hierarchii (liczby od 2 do 14)
+        position - pozycja karty w reprezentacji 0/1"""
 
     def __init__(self, suit, rank):
         """Konstruktor przypisujący kolor, numer/figurę i wartość określającą pozycję karty w hierarchii"""
@@ -75,8 +76,15 @@ class Card:
         else:
             self.value = int(rank)
 
-    # def get(self):
-    #     return [self.rank, self.suit]
+        self.position = self.value - 2
+        if suit == club:
+            self.position = self.position
+        elif suit == diamond:
+            self.position = self.position + 13
+        elif suit == heart:
+            self.position = self.position + (2*13)
+        elif suit == spade:
+            self.position = self.position + (3*13)
 
     def __eq__(self, other):
         """"Metoda określająca równość obiektów - wykorzystywana do sortowania kart"""
@@ -132,6 +140,7 @@ class Player:
         self.makeable_contracts = {}  # maksymalne realizowane kontrakty wyznaczone za pomocą solvera
         self.number_of_trick = {}  # maksymalna liczba wzięty lew wyznaczona za pomocą solvere
         self.max_contract_score = []  # wartość punktowa najbardziej punktowanego kontraktu
+        self.hand_representation = self.set_hand_representation() #reprezentacja ręki gracza w formie 0/1
 
     def split_hand(self):
         """Metoda rodzielająca rękę gracza na poszczegolne kolory kart (od najstarszego do najmłodszego),
@@ -155,3 +164,16 @@ class Player:
         cards = [c.rank for c in hand]
 
         return list_to_string(cards)
+
+    def set_hand_representation(self):
+        """Metoda zwracająca reprezentację ręki gracza w formie 0/1
+        0 - nie posiada karty
+        1 - posiada kartę
+        Karty ustawione są od 2 do A kolejno kolorami trefl, karo, kier i na końcu pik"""
+
+        hand_representation = [0 for i in range(0, 52)]
+
+        for hand in self.hand:
+            hand_representation[hand.position] = 1
+
+        return hand_representation
