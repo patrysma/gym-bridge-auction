@@ -21,7 +21,7 @@ class AuctionEnv(gym.Env):
         self.n_players = 4  # liczba graczy
         self.deck = Deck()  # utworzenie talii
         self.players = []  # lista graczy
-        self.reward_range = (-100, 100)
+        self.reward_range = (-9280, 9280)
         # przestrzeń obserwacji
         self.observation_space = spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
                                               'whose next turn': spaces.Discrete(self.n_players),
@@ -56,18 +56,22 @@ class AuctionEnv(gym.Env):
                 self.players[j].hand_splitted[i] = self.players[j].hand_to_display(self.players[j].hand_splitted[i])
 
         self.choose_dealer_and_order()  # wybór rozdającego i kolejność licytacji
-        self.reward = [0, 0]
+        self.reward = [None, None]
         self.pass_number = 0
+        self.optimum_contract_score = [None, None]
         self.insert_solver_results()  # wstawienie wyników z solvera dla poszczególnych graczy
         self.double = False  # czy była kontra
         self.redouble = False  # czy była rekontra
+        self.bind_number = None
+        self.max_contract = None
+        self.trick_difference = None
         self.reset()
 
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
 
         state = self.get_game_state(action, False)
-        self.get_reward(state)
+        self.reward = self.get_reward(state, action)
         self.index_order += 1
 
         if self.index_order == 4:
@@ -80,7 +84,10 @@ class AuctionEnv(gym.Env):
         return state, self.reward, done, {}
 
     def reset(self):
-        self.reward = [0, 0]
+        self.reward = [None, None]
+        self.trick_difference = None
+        self.bind_number = None
+        self.max_contract = None
         self.viewer = None
         self.pass_number = 0
         self.index_order = 0
@@ -127,6 +134,8 @@ class AuctionEnv(gym.Env):
                     print(diamond + ' ' + self.players[i].hand_splitted[2])
                     print(club + ' ' + self.players[i].hand_splitted[3])
 
+                print(' ')
+
                 self.viewer = False
 
             else:
@@ -141,6 +150,7 @@ class AuctionEnv(gym.Env):
                 print('EAST_contract: ' + self.players[1].player_contracts.__str__())
                 print('SOUTH_contract: ' + self.players[2].player_contracts.__str__())
                 print('WEST_contract: ' + self.players[3].player_contracts.__str__())
+                print(' ')
 
         else:
             raise error.UnsupportedMode('Unsupported render mode' + mode)
@@ -193,8 +203,12 @@ class AuctionEnv(gym.Env):
         for i in range(0, self.n_players):
             self.players[i].number_of_trick = get_solver_result_for_player(i, solver_results)
             self.players[i].makeable_contracts = max_contract_for_suit(self.players[i].number_of_trick)
-            points_for_contracts = calc_point_for_contract(self.players[i].makeable_contracts)
-            self.players[i].max_contract_score = choose_best_contracts(points_for_contracts)
+
+        self.optimum_contract_score[0] = get_optimum_contracts_from_solver(pbn_repr,
+                                                                           self.players.index(self.players_order[0]))
+        self.optimum_contract_score[1] = - self.optimum_contract_score[0]
+            # points_for_contracts = calc_point_for_contract(self.players[i].makeable_contracts)
+            # self.players[i].max_contract_score = choose_best_contracts(points_for_contracts)
 
     @staticmethod
     def create_available_contracts():
@@ -339,81 +353,99 @@ class AuctionEnv(gym.Env):
 
         return state
 
-    def get_reward(self, state):
+    def get_reward(self, state, action):
         """Wyznaczenie nagrody za wykonane działanie przez poszczególnego agenta"""
+        reward = [None, None]
+
+        ind_w = state['winning_pair']
+        ind_p = None
+
+        for i in enumerate(WIN_PAIR):
+            if i[0] != ind_w:
+                ind_p = i[0]
+
+        optimum_contract_score = self.optimum_contract_score[ind_w]
+        print(optimum_contract_score)
 
         if self.last_contract.value == 0:
             # przypadek gdy na początku licytacji (lub ewentualnie w dalszych krokach) zgłoszono pas
-            self.reward[0] = 0
-            self.reward[0] = 0
+            reward[0] = 0 - abs(optimum_contract_score)
+            reward[1] = reward[0]
 
         else:
-            bind_trump = self.last_contract.suit
-            bind_number = self.last_contract.number
-            max_contract = self.players[state['winning_pair']].makeable_contracts[bind_trump]
-            max_number_of_tricks = self.players[state['winning_pair']].number_of_trick[bind_trump]
-            number_of_tricks = bind_number + 6
-            ind_w = state['winning_pair']
-            ind_p = None
-            trick_difference = number_of_tricks - max_number_of_tricks
+            if action == 0:  # działanie agenta to pas
+                reward = self.reward
+            elif action == 36 or action == 37:  # działanie agenta to kontra
+                if self.bind_number <= self.max_contract:
+                    # kontrakt jest realizowalny
+                    if state['double/redouble'] == 1:
+                        reward[ind_w] = (self.reward[ind_w] + optimum_contract_score) * CONTRACT_POINTS['X'] \
+                                        + BONUS['DOUBLE']
+                    elif state['double/redouble'] == 2:
+                        reward[ind_w] = (self.reward[ind_w] + optimum_contract_score) * CONTRACT_POINTS['XX'] \
+                                        + BONUS['REDOUBLE']
 
-            for i in enumerate(WIN_PAIR):
-                if i[0] != ind_w:
-                    ind_p = i[0]
+                    reward[ind_w] = reward[ind_w] - optimum_contract_score
+                    reward[ind_p] = - reward[ind_w]
 
-            # maksymalne ilości punktów z zapisu dla danej pary
-            max_score_w = self.players[ind_w].max_contract_score
-            print(max_score_w)
-            max_score_p = self.players[ind_p].max_contract_score
-            print(max_score_p)
-
-            if bind_number <= max_contract:
-                # kontrakt jest realizowalny
-                if bind_trump == 'NT':
-                    self.reward[ind_w] = CONTRACT_POINTS['NT'][0] + (bind_number - 1)*CONTRACT_POINTS['NT'][1]
                 else:
-                    self.reward[ind_w] = bind_number * CONTRACT_POINTS[bind_trump]
+                    # kontrakt nie jest realizowalny
+                    if state['double/redouble'] == 1:
+                        reward[ind_p] = PENALTY_POINTS['DOUBLE'][0] + \
+                                         PENALTY_POINTS['DOUBLE'][0] * PENALTY_POINTS['DOUBLE'][1] * (
+                                                 self.trick_difference - 1)
+                        if self.trick_difference >= 4:
+                            reward[ind_p] += PENALTY_POINTS['DOUBLE'][0] * (self.trick_difference - 3)
+                    elif state['double/redouble'] == 2:
+                        reward[ind_p] = PENALTY_POINTS['REDOUBLE'][0] + \
+                                             PENALTY_POINTS['REDOUBLE'][0] * PENALTY_POINTS['REDOUBLE'][1] \
+                                             * (self.trick_difference - 1)
+                        if self.trick_difference >= 4:
+                            reward[ind_p] += PENALTY_POINTS['REDOUBLE'][0] * (self.trick_difference - 3)
 
-                if state['double/redouble'] == 1:
-                    self.reward[ind_w] *= CONTRACT_POINTS['X']
-                    self.reward[ind_w] += BONUS['DOUBLE']
-                elif state['double/redouble'] == 2:
-                    self.reward[ind_w] *= CONTRACT_POINTS['XX']
-                    self.reward[ind_w] += BONUS['REDOUBLE']
+                    reward[ind_w] = - reward[ind_p]
+                    reward[ind_w] = reward[ind_w] - optimum_contract_score
+                    reward[ind_p] = - reward[ind_w]
 
-                # premie za częściówki, dograne, szlemiki, szlemy
-                if self.reward[ind_w] < 100:
-                    self.reward[ind_w] += BONUS['PARTIAL-GAME']
+            else:  # działanie to jedna z odzywek licytacyjnych
+                bind_trump = self.last_contract.suit
+                self.bind_number = self.last_contract.number
+                self.max_contract = self.players[state['whose turn']].makeable_contracts[bind_trump]
+                max_number_of_tricks = self.players[state['whose turn']].number_of_trick[bind_trump]
+                number_of_tricks = self.bind_number + 6
+                self.trick_difference = number_of_tricks - max_number_of_tricks
+
+                if self.bind_number <= self.max_contract:
+                    # kontrakt jest realizowalny
+                    if bind_trump == 'NT':
+                        reward[ind_w] = CONTRACT_POINTS['NT'][0] + (self.bind_number - 1) * CONTRACT_POINTS['NT'][1]
+                    else:
+                        reward[ind_w] = self.bind_number * CONTRACT_POINTS[bind_trump]
+
+                    # premie za częściówki, dograne, szlemiki, szlemy
+                    if reward[ind_w] < 100:
+                        reward[ind_w] += BONUS['PARTIAL-GAME']
+                    else:
+                        reward[ind_w] += BONUS['GAME']
+
+                    if self.bind_number == 6:
+                        reward[ind_w] += BONUS['SLAM']
+                    elif self.bind_number == 7:
+                        reward[ind_w] += BONUS['GRAND_SLAM']
+
+                    reward[ind_w] = reward[ind_w] - optimum_contract_score
+                    reward[ind_p] = - reward[ind_w]
                 else:
-                    self.reward[ind_w] += BONUS['GAME']
+                    # kontrakt nie jest realizowalny
+                    if state['double/redouble'] == 0:
+                        # nie było kontry lub rekontry
+                        reward[ind_p] = PENALTY_POINTS['NO DOUBLE/REDOUBLE'] * self.trick_difference
 
-                if bind_number == 6:
-                    self.reward[ind_w] += BONUS['SLAM']
-                elif bind_number == 7:
-                    self.reward[ind_w] += BONUS['GRAND_SLAM']
+                    reward[ind_w] = - reward[ind_p]
+                    reward[ind_w] = reward[ind_w] - optimum_contract_score
+                    reward[ind_p] = - reward[ind_w]
 
-                #self.reward[ind_w] = self.reward[ind_w]/max_score_w
-                self.reward[ind_p] = -self.reward[ind_w]
-
-            else:
-                # kontrakt nie jest realizowalny
-                if state['double/redouble'] == 0:
-                    # nie było kontry lub rekontry
-                    self.reward[ind_p] = PENALTY_POINTS['NO DOUBLE/REDOUBLE']*trick_difference
-                elif state['double/redouble'] == 1:
-                    self.reward[ind_p] = PENALTY_POINTS['DOUBLE'][0] + \
-                                         PENALTY_POINTS['DOUBLE'][0]*PENALTY_POINTS['DOUBLE'][1]*(trick_difference - 1)
-                    if trick_difference >= 4:
-                        self.reward[ind_p] += PENALTY_POINTS['DOUBLE'][0]*(trick_difference - 3)
-                elif state['double/redouble'] == 2:
-                    self.reward[ind_p] = PENALTY_POINTS['REDOUBLE'][0] + \
-                                         PENALTY_POINTS['REDOUBLE'][0]*PENALTY_POINTS['REDOUBLE'][1]\
-                                         *(trick_difference - 1)
-                    if trick_difference >= 4:
-                        self.reward[ind_p] += PENALTY_POINTS['REDOUBLE'][0]*(trick_difference - 3)
-
-                #self.reward[ind_p] = self.reward[ind_p]/max_score_p
-                self.reward[ind_w] = -self.reward[ind_p]
+        return reward
 
     def is_over(self, action):
         """Wyznaczenie warunku końca licytacji - po 3 pasach z rzędu lub gdy nikt nie zadeklarował żadnego kontraktu"""
@@ -434,4 +466,3 @@ class AuctionEnv(gym.Env):
             return True
         else:
             return False
-

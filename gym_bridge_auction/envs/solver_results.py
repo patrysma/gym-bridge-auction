@@ -60,41 +60,41 @@ def max_contract_for_suit(player_solver_result):
     return player_max_contract
 
 
-def calc_point_for_contract(player_max_contract):
-    """Funkcja wyliczająca ilość punktów jaką można zdobyć za ugrany dany kontrakt"""
-
-    point_for_contracts = {}
-
-    # punkty kontraktowe
-    for i in range(0, len(BIND_SUIT) - 1):
-        point_for_contracts[BIND_SUIT[i]] = CONTRACT_POINTS[BIND_SUIT[i]] * player_max_contract[BIND_SUIT[i]]
-
-    if player_max_contract['NT'] == 0:
-        point_for_contracts['NT'] = 0
-    else:
-        point_for_contracts['NT'] = CONTRACT_POINTS['NT'][0] + (player_max_contract['NT'] - 1) * CONTRACT_POINTS['NT'][
-            1]
-
-    # punkty za częściówki, dograne i szlemy i szlemiki
-    for i in range(0, len(BIND_SUIT)):
-        if point_for_contracts[BIND_SUIT[i]] != 0:
-            if point_for_contracts[BIND_SUIT[i]] < 100:
-                point_for_contracts[BIND_SUIT[i]] += BONUS['PARTIAL-GAME']
-            else:
-                point_for_contracts[BIND_SUIT[i]] += BONUS['GAME']
-
-            if player_max_contract[BIND_SUIT[i]] == 6:
-                point_for_contracts[BIND_SUIT[i]] += BONUS['SLAM']
-            elif player_max_contract[BIND_SUIT[i]] == 7:
-                point_for_contracts[BIND_SUIT[i]] += BONUS['GRAND_SLAM']
-
-    return point_for_contracts
-
-
-def choose_best_contracts(point_for_contracts):
-    """Funkcja wybierająca najbardziej punktowany kontrakt dla danego gracza"""
-
-    values_list = list(point_for_contracts.values())
-    max_value = max(values_list)
-
-    return max_value
+# def calc_point_for_contract(player_max_contract):
+#     """Funkcja wyliczająca ilość punktów jaką można zdobyć za ugrany dany kontrakt"""
+#
+#     point_for_contracts = {}
+#
+#     # punkty kontraktowe
+#     for i in range(0, len(BIND_SUIT) - 1):
+#         point_for_contracts[BIND_SUIT[i]] = CONTRACT_POINTS[BIND_SUIT[i]] * player_max_contract[BIND_SUIT[i]]
+#
+#     if player_max_contract['NT'] == 0:
+#         point_for_contracts['NT'] = 0
+#     else:
+#         point_for_contracts['NT'] = CONTRACT_POINTS['NT'][0] + (player_max_contract['NT'] - 1) * CONTRACT_POINTS['NT'][
+#             1]
+#
+#     # punkty za częściówki, dograne i szlemy i szlemiki
+#     for i in range(0, len(BIND_SUIT)):
+#         if point_for_contracts[BIND_SUIT[i]] != 0:
+#             if point_for_contracts[BIND_SUIT[i]] < 100:
+#                 point_for_contracts[BIND_SUIT[i]] += BONUS['PARTIAL-GAME']
+#             else:
+#                 point_for_contracts[BIND_SUIT[i]] += BONUS['GAME']
+#
+#             if player_max_contract[BIND_SUIT[i]] == 6:
+#                 point_for_contracts[BIND_SUIT[i]] += BONUS['SLAM']
+#             elif player_max_contract[BIND_SUIT[i]] == 7:
+#                 point_for_contracts[BIND_SUIT[i]] += BONUS['GRAND_SLAM']
+#
+#     return point_for_contracts
+#
+#
+# def choose_best_contracts(point_for_contracts):
+#     """Funkcja wybierająca najbardziej punktowany kontrakt dla danego gracza"""
+#
+#     values_list = list(point_for_contracts.values())
+#     max_value = max(values_list)
+#
+#     return max_value
