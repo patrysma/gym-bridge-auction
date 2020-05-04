@@ -1,19 +1,18 @@
 import gym
 import gym_bridge_auction
 
-
 env = gym.make('BridgeAuction-v0')
 
-for i_episode in range(1):
+for i_episode in range(5):
     observation = env.reset()
-    env.render('console')
+    env.render()
     print('Observation space:')
     print(observation)
 
     for i in range(100):
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
-        env.render('console')
+        env.render()
         print('Observation space:')
         print(observation)
         print('Reward: ' + str(reward))

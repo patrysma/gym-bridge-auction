@@ -9,18 +9,19 @@ club = "\u2663"
 # Nazwy poszczególych graczy, w kolejności zegarowej od północy (N - North, E - East, S - South, W -West)
 NAMES = ['N', 'E', 'S', 'W']
 
-# miana odzywki
+# Miana odzywki
 BIND_SUIT = ['C', 'D', 'H', 'S', 'NT']
 
+#
 WIN_PAIR = [(0, 2), (1, 3)]
 
 
 class Contract:
     """Klasa definiująca poszczególne kontrakty licytacji brydżowej -
-    {pass, 1C, 1D, 1H, 1S, 1NT, ..., 7C, 7D, 7H, 7S, 7NT}
+    {pass, 1C, 1D, 1H, 1S, 1NT, ..., 7C, 7D, 7H, 7S, 7NT, double, redouble}
     gdzie:
     suit - miano odzywki - symbole kolorów, czyli (od najmłodszego): C-Club (trefl), D-Diamond (karo), H-Heart (kier),
-    S-Spade (pik), NT-no trump (bez atu) plus doadatkowo odzywka "pass";
+    S-Spade (pik), NT-no trump (bez atu) plus doadatkowo zapowiedź "pass", "double", "redouble";
     number - parametr określająca liczbę danej odzywki (liczby od 1 do 7), dla pasu nie przypisuje się żadnej liczby;
     value - parametr określający wyższość danego kontraktu (wartości od 1 do 35), w przypadku pasu przypisano mu
     wartość zero."""
@@ -36,9 +37,6 @@ class Contract:
         """Metoda przypisująca wartość, która określa wyższość danej odzywki podczas licytacji"""
 
         self.value = value
-
-    # def get(self):
-    #     return self.number, self.suit
 
     def __str__(self):
         """Reprezentacja tekstowa kontraktu"""
@@ -76,6 +74,7 @@ class Card:
         else:
             self.value = int(rank)
 
+        # Pozycje kart w talii do reprezentacji 0/1
         self.position = self.value - 2
         if suit == club:
             self.position = self.position

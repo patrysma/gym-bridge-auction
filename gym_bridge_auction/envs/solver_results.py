@@ -2,7 +2,7 @@ from gym_bridge_auction.envs.game import *
 # biblioteka umożliwiająca połączenie C++ i Python
 import cppyy
 
-# wartości punktowe z zapisu brydżowego plus dodatkowe punkty wykorzystywane do wyznaczenia optymalnego kontraktu
+# wartości punktowe z zapisu brydżowego do wyznaczenia optymalnego kontraktu
 # i funkcji nagrody
 CONTRACT_POINTS = {'C': 20, 'D': 20, 'H': 30, 'S': 30, 'NT': (40, 30), 'X': 2, 'XX': 4}
 PENALTY_POINTS = {'NO DOUBLE/REDOUBLE': 50, 'DOUBLE': (100, 2), 'REDOUBLE': (200, 2)}

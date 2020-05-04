@@ -6,10 +6,6 @@ import time
 from gym_bridge_auction.envs.solver_results import *
 from gym_bridge_auction.envs.dynamic_space import Dynamic
 
-CONTRACT_POINTS = {'C': 20, 'D': 20, 'H': 30, 'S': 30, 'NT': (40, 30), 'X': 2, 'XX': 4}
-PENALTY_POINTS = {'NO DOUBLE/REDOUBLE': 50, 'DOUBLE': (100, 2), 'REDOUBLE': (200, 2)}
-BONUS = {'SLAM': 500, 'GRAND_SLAM': 1000, 'PARTIAL-GAME': 50, 'GAME': 300, 'DOUBLE': 50, 'REDOUBLE': 100}
-
 
 class AuctionEnv(gym.Env):
     metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 450}
@@ -355,24 +351,27 @@ class AuctionEnv(gym.Env):
 
     def get_reward(self, state, action):
         """Wyznaczenie nagrody za wykonane działanie przez poszczególnego agenta"""
+
         reward = [None, None]
-
-        ind_w = state['winning_pair']
-        ind_p = None
-
-        for i in enumerate(WIN_PAIR):
-            if i[0] != ind_w:
-                ind_p = i[0]
-
-        optimum_contract_score = self.optimum_contract_score[ind_w]
-        print(optimum_contract_score)
 
         if self.last_contract.value == 0:
             # przypadek gdy na początku licytacji (lub ewentualnie w dalszych krokach) zgłoszono pas
-            reward[0] = 0 - abs(optimum_contract_score)
-            reward[1] = reward[0]
+            # - nie ustalono kontraktu
+            reward[0] = - self.optimum_contract_score[0]
+            reward[1] = - reward[0]
 
         else:
+            # ustalono jakiś kontrakt
+
+            ind_w = state['winning_pair']
+            ind_p = None
+
+            for i in enumerate(WIN_PAIR):
+                if i[0] != ind_w:
+                    ind_p = i[0]
+
+            optimum_contract_score = self.optimum_contract_score[ind_w]
+
             if action == 0:  # działanie agenta to pas
                 reward = self.reward
             elif action == 36 or action == 37:  # działanie agenta to kontra
@@ -448,7 +447,7 @@ class AuctionEnv(gym.Env):
         return reward
 
     def is_over(self, action):
-        """Wyznaczenie warunku końca licytacji - po 3 pasach z rzędu lub gdy nikt nie zadeklarował żadnego kontraktu"""
+        """Wyznaczenie warunku końca licytacji"""
 
         if action == 0:
             self.pass_number += 1
