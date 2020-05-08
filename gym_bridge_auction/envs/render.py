@@ -1,11 +1,7 @@
 from gym import error
 from gym_bridge_auction.envs.game import *
-
-try:
-    import pygame
-    from pygame.locals import *
-except ImportError as e:
-    raise error.DependencyNotInstalled("{}. (install pygame using `pip install pygame`".format(e))
+from gym_bridge_auction.envs.bridge_auction_env import *
+import pygame
 
 
 class Window:
@@ -160,5 +156,5 @@ class Window:
     def close_window(self):
         """Metoda zamykająca okno i kończąca program"""
         pygame.quit()
-        
+
 

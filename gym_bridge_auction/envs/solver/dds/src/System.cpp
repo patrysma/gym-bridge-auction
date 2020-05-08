@@ -1,4 +1,3 @@
-
 /*
    DDS, a bridge double dummy solver.
 
@@ -272,12 +271,6 @@ bool System::IsSingleThreaded() const
 bool System::IsIMPL() const
 {
   return (preferredSystem >= DDS_SYSTEM_THREAD_STLIMPL);
-}
-
-
-unsigned System::NumThreads() const
-{
-  return static_cast<unsigned>(numThreads);
 }
 
 

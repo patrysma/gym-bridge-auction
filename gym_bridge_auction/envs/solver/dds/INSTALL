@@ -146,8 +146,9 @@ options, the DLL will default to the multi-threaded one with the
 lowest number (among those compiled in, of course).  The numbers
 can be found in ../include/dll.h.
 
-STLIMPL and PPLIMPL are presently recommended only for
-the Windows/Microsoft environment.
+It is NOT recommended to use STLIMPL and PPLIMPL as they are today.
+You cannot control the number of threads that they will want, nor
+the memory that they will consume.  But maybe some day...
 
 The others are very equivalent in terms of speed, but you might as
 well use STL if you have it, as this is probably the most portable.

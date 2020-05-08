@@ -12,7 +12,9 @@ NAMES = ['N', 'E', 'S', 'W']
 # Miana odzywki
 BIND_SUIT = ['C', 'D', 'H', 'S', 'NT']
 
-#
+# Indeksy graczy tworzących parę
+# 0 - N-S (indeksy 0 i 2)
+# 1 - E-W (indeksy 1 i 3)
 WIN_PAIR = [(0, 2), (1, 3)]
 
 
@@ -93,7 +95,7 @@ class Card:
     def __lt__(self, other):
         """Metoda porównywująca obiekty - wykorzystywana do sortowania kart"""
 
-        return self.value < other.value
+        return self.value > other.value
 
 
 class Deck:
@@ -139,7 +141,7 @@ class Player:
         self.makeable_contracts = {}  # maksymalne realizowane kontrakty wyznaczone za pomocą solvera
         self.number_of_trick = {}  # maksymalna liczba wzięty lew wyznaczona za pomocą solvere
         self.max_contract_score = []  # wartość punktowa najbardziej punktowanego kontraktu
-        self.hand_representation = self.set_hand_representation() #reprezentacja ręki gracza w formie 0/1
+        self.hand_representation = self.set_hand_representation() # reprezentacja ręki gracza w formie 0/1
 
     def split_hand(self):
         """Metoda rodzielająca rękę gracza na poszczegolne kolory kart (od najstarszego do najmłodszego),

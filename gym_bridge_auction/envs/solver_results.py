@@ -1,4 +1,5 @@
 from gym_bridge_auction.envs.game import *
+#from gym_bridge_auction.envs.bridge_auction_env import cppyy
 # biblioteka umożliwiająca połączenie C++ i Python
 import cppyy
 

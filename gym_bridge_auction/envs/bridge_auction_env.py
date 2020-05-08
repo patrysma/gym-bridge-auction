@@ -1,14 +1,17 @@
-import gym
-from gym import spaces
-from gym_bridge_auction.envs.render import *
 import random
 import time
+import gym
+from gym import error
+from gym import spaces
 from gym_bridge_auction.envs.solver_results import *
 from gym_bridge_auction.envs.dynamic_space import Dynamic
+from gym_bridge_auction.envs.render import Window
 
 
 class AuctionEnv(gym.Env):
-    metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 450}
+    """Środowisko wieloagentowe (czterech graczy) symulujące licytację brydżową."""
+
+    metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 1}
 
     def __init__(self):
 
@@ -55,10 +58,11 @@ class AuctionEnv(gym.Env):
         self.reward = [None, None]
         self.pass_number = 0
         self.optimum_contract_score = [None, None]
+        self.score = [None, None]
         self.insert_solver_results()  # wstawienie wyników z solvera dla poszczególnych graczy
         self.double = False  # czy była kontra
         self.redouble = False  # czy była rekontra
-        self.bind_number = None
+        self._bind_number = None
         self.max_contract = None
         self.trick_difference = None
         self.reset()
@@ -82,7 +86,7 @@ class AuctionEnv(gym.Env):
     def reset(self):
         self.reward = [None, None]
         self.trick_difference = None
-        self.bind_number = None
+        self._bind_number = None
         self.max_contract = None
         self.viewer = None
         self.pass_number = 0
@@ -117,7 +121,6 @@ class AuctionEnv(gym.Env):
                                       self.metadata['video.frames_per_second'])
 
             time.sleep(2)
-
         elif mode == 'console':
             if self.viewer is None:
                 print('Dealer: ' + self.dealer_name)
@@ -173,7 +176,7 @@ class AuctionEnv(gym.Env):
 
             for i in range(0, 4):
                 list_pom = self.players[j].hand_splitted[i].split()
-                list_pom.reverse()
+                #list_pom.reverse()
 
                 for k in list_pom:
                     if k == '10':
@@ -371,11 +374,12 @@ class AuctionEnv(gym.Env):
                     ind_p = i[0]
 
             optimum_contract_score = self.optimum_contract_score[ind_w]
+            print(optimum_contract_score)
 
             if action == 0:  # działanie agenta to pas
                 reward = self.reward
             elif action == 36 or action == 37:  # działanie agenta to kontra
-                if self.bind_number <= self.max_contract:
+                if self._bind_number <= self.max_contract:
                     # kontrakt jest realizowalny
                     if state['double/redouble'] == 1:
                         reward[ind_w] = (self.reward[ind_w] + optimum_contract_score) * CONTRACT_POINTS['X'] \
@@ -408,18 +412,18 @@ class AuctionEnv(gym.Env):
 
             else:  # działanie to jedna z odzywek licytacyjnych
                 bind_trump = self.last_contract.suit
-                self.bind_number = self.last_contract.number
+                self._bind_number = self.last_contract.number
                 self.max_contract = self.players[state['whose turn']].makeable_contracts[bind_trump]
                 max_number_of_tricks = self.players[state['whose turn']].number_of_trick[bind_trump]
-                number_of_tricks = self.bind_number + 6
+                number_of_tricks = self._bind_number + 6
                 self.trick_difference = number_of_tricks - max_number_of_tricks
 
-                if self.bind_number <= self.max_contract:
+                if self._bind_number <= self.max_contract:
                     # kontrakt jest realizowalny
                     if bind_trump == 'NT':
-                        reward[ind_w] = CONTRACT_POINTS['NT'][0] + (self.bind_number - 1) * CONTRACT_POINTS['NT'][1]
+                        reward[ind_w] = CONTRACT_POINTS['NT'][0] + (self._bind_number - 1) * CONTRACT_POINTS['NT'][1]
                     else:
-                        reward[ind_w] = self.bind_number * CONTRACT_POINTS[bind_trump]
+                        reward[ind_w] = self._bind_number * CONTRACT_POINTS[bind_trump]
 
                     # premie za częściówki, dograne, szlemiki, szlemy
                     if reward[ind_w] < 100:
@@ -427,9 +431,9 @@ class AuctionEnv(gym.Env):
                     else:
                         reward[ind_w] += BONUS['GAME']
 
-                    if self.bind_number == 6:
+                    if self._bind_number == 6:
                         reward[ind_w] += BONUS['SLAM']
-                    elif self.bind_number == 7:
+                    elif self._bind_number == 7:
                         reward[ind_w] += BONUS['GRAND_SLAM']
 
                     reward[ind_w] = reward[ind_w] - optimum_contract_score
