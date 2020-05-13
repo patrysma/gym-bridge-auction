@@ -7,7 +7,8 @@ import cppyy
 # i funkcji nagrody
 CONTRACT_POINTS = {'C': 20, 'D': 20, 'H': 30, 'S': 30, 'NT': (40, 30), 'X': 2, 'XX': 4}
 PENALTY_POINTS = {'NO DOUBLE/REDOUBLE': 50, 'DOUBLE': (100, 2), 'REDOUBLE': (200, 2)}
-BONUS = {'SLAM': 500, 'GRAND_SLAM': 1000, 'PARTIAL-GAME': 50, 'GAME': 300, 'DOUBLE': 50, 'REDOUBLE': 100}
+BONUS = {'SLAM': 500, 'GRAND_SLAM': 1000, 'PARTIAL-GAME': 50, 'GAME': 300, 'DOUBLE': 50, 'REDOUBLE': 100,
+         'OVERTRICKS_DOUBLE': 100, 'OVERTRICKS_REDOUBLE': 200}
 
 
 def get_results_from_solver(pbn):

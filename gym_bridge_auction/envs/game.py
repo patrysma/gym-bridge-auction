@@ -17,6 +17,8 @@ BIND_SUIT = ['C', 'D', 'H', 'S', 'NT']
 # 1 - E-W (indeksy 1 i 3)
 WIN_PAIR = [(0, 2), (1, 3)]
 
+PAIR = ['N/S', 'E/W']
+
 
 class Contract:
     """Klasa definiująca poszczególne kontrakty licytacji brydżowej -
@@ -172,7 +174,7 @@ class Player:
         1 - posiada kartę
         Karty ustawione są od 2 do A kolejno kolorami trefl, karo, kier i na końcu pik"""
 
-        hand_representation = [0 for i in range(0, 52)]
+        hand_representation = [0 for _ in range(0, 52)]
 
         for hand in self.hand:
             hand_representation[hand.position] = 1

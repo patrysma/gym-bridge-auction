@@ -44,32 +44,38 @@ class Window:
         pygame.draw.rect(self.screen, self.colours['blue'], pygame.Rect(40, 340, 400, 250), 1)
         # utworzenie etykiety i umiejscowienie na ekranie
         # etykiety poszczególnych graczy
-        north_player_label = self.font.render(NAMES[0], 1, self.colours['blue'])
+        north_player_label = self.font.render(NAMES[0], True, self.colours['blue'])
         self.screen.blit(north_player_label, (650, 150))
         colour_labels = self.create_colours_label()
         self.place_labels(colour_labels, 550, 200)
-        east_player_label = self.font.render(NAMES[1], 1, self.colours['blue'])
+        east_player_label = self.font.render(NAMES[1], True, self.colours['blue'])
         self.screen.blit(east_player_label, (1150, 350))
         self.place_labels(colour_labels, 1050, 400)
-        south_player_label = self.font.render(NAMES[2], 1, self.colours['blue'])
+        south_player_label = self.font.render(NAMES[2], True, self.colours['blue'])
         self.screen.blit(south_player_label, (650, 550))
         self.place_labels(colour_labels, 550, 600)
-        west_player_label = self.font.render(NAMES[3], 1, self.colours['blue'])
+        west_player_label = self.font.render(NAMES[3], True, self.colours['blue'])
         self.screen.blit(west_player_label, (150, 350))
         self.place_labels(colour_labels, 50, 400)
         # etykiety licytacji i wyników
-        north_contract_label = self.font.render("NORTH Contract:", 1, self.colours['black'])
-        self.screen.blit(north_contract_label, (10, 10))
-        east_contract_label = self.font.render("EAST Contract:", 1, self.colours['black'])
-        self.screen.blit(east_contract_label, (10, 60))
-        south_contract_label = self.font.render("SOUTH Contract:", 1, self.colours['black'])
-        self.screen.blit(south_contract_label, (10, 110))
-        west_contract_label = self.font.render("WEST Contract:", 1, self.colours['black'])
-        self.screen.blit(west_contract_label, (10, 160))
-        last_contract_label = self.font.render("Last contract:", 1, self.colours['black'])
-        self.screen.blit(last_contract_label, (1000, 10))
-        who_is_dealer_label = self.font.render("DEALER:", 1, self.colours['black'])
-        self.screen.blit(who_is_dealer_label, (1000, 60))
+        north_contract_label = self.font.render("NORTH Contract:", True, self.colours['black'])
+        self.screen.blit(north_contract_label, (50, 10))
+        east_contract_label = self.font.render("EAST Contract:", True, self.colours['black'])
+        self.screen.blit(east_contract_label, (50, 60))
+        south_contract_label = self.font.render("SOUTH Contract:", True, self.colours['black'])
+        self.screen.blit(south_contract_label, (50, 110))
+        west_contract_label = self.font.render("WEST Contract:", True, self.colours['black'])
+        self.screen.blit(west_contract_label, (50, 160))
+        last_contract_label = self.font.render("Last contract:", True, self.colours['black'])
+        self.screen.blit(last_contract_label, (1050, 10))
+        who_is_dealer_label = self.font.render("DEALER:", True, self.colours['black'])
+        self.screen.blit(who_is_dealer_label, (1050, 60))
+        win_pair_label = self.font.render("Pair:", True, self.colours['black'])
+        self.screen.blit(win_pair_label, (1050, 110))
+        pair_score_label = self.font.render("Pair score:", True, self.colours['black'])
+        self.screen.blit(pair_score_label, (1050, 160))
+        win_pair_label = self.font.render("Optimum score:", True, self.colours['black'])
+        self.screen.blit(win_pair_label, (1050, 210))
         # aktualizacja widoku
         pygame.display.update()
 
@@ -115,7 +121,7 @@ class Window:
            text - zmienna typu tekstowego
            font - obiekt typu Font"""
 
-        text_label = font.render(text, 1, self.colours['black'], self.colours['ecru'])
+        text_label = font.render(text, True, self.colours['black'], self.colours['ecru'])
 
         return text_label
 
@@ -128,22 +134,28 @@ class Window:
         label_list = [self.create_mutable_labels(text[i], self.font) for i in range(0, 4)]
         self.place_labels(label_list, x_pos, y_pos)
 
-    def update_view(self, last_contract, north_contract, east_contract, south_contract, west_contract,
-                    frames_per_second):
+    def update_view(self, last_contract, north_contract, east_contract, south_contract, west_contract, win_pair, score,
+                    optimum_score, frames_per_second):
         """Metoda aktualizująca zmieniające się etykiety z tekstem
-           gdzie podane parametry to: ostatni najwyższy kontrakt i kontrakty poszczególnych graczy - zmienne typu str
-           oraz ilość klatek na sekundę"""
+           gdzie podane parametry to: ostatni najwyższy kontrakt, kontrakty poszczególnych graczy, nazwy par, zapis,
+           optymalny zapis według solvera oraz ilość klatek na sekundę"""
 
         # prostokąty zakrywające poprzednie wartości zmieniającego się tekstu
-        pygame.draw.rect(self.screen, self.colours['green'], pygame.Rect(210, 10, 300, 200))
-        pygame.draw.rect(self.screen, self.colours['green'], pygame.Rect(1200, 10, 300, 50))
+        pygame.draw.rect(self.screen, self.colours['green'], pygame.Rect(250, 10, 200, 200))
+        pygame.draw.rect(self.screen, self.colours['green'], pygame.Rect(1250, 10, 800, 300))
         # wyświetlenie rozdającego
-        self.screen.blit(self.create_mutable_labels(self.who_is_dealer, self.font), (1200, 60))
-        # wyświetlenie kontraktów
+        self.screen.blit(self.create_mutable_labels(self.who_is_dealer, self.font), (1250, 60))
+        # wyświetlenie kontraktów oraz punktów
         self.players_contracts_display = [north_contract, east_contract, south_contract, west_contract]
         self.last_contract_display = last_contract
-        self.screen.blit(self.create_mutable_labels(self.last_contract_display, self.font), (1200, 10))
-        self.create_list_of_labels(self.players_contracts_display, 210, 10)
+        self.screen.blit(self.create_mutable_labels(self.last_contract_display, self.font), (1250, 10))
+        self.screen.blit(self.create_mutable_labels(win_pair[0], self.font), (1250, 110))
+        self.screen.blit(self.create_mutable_labels(win_pair[1], self.font), (1350, 110))
+        self.screen.blit(self.create_mutable_labels(str(score[0]), self.font), (1250, 160))
+        self.screen.blit(self.create_mutable_labels(str(score[1]), self.font), (1350, 160))
+        self.screen.blit(self.create_mutable_labels(str(optimum_score[0]), self.font), (1250, 210))
+        self.screen.blit(self.create_mutable_labels(str(optimum_score[1]), self.font), (1350, 210))
+        self.create_list_of_labels(self.players_contracts_display, 250, 10)
         # aktualizacja i ustawienie ilości klatek na sekundę
         pygame.display.update()
         self.clock.tick(frames_per_second)
@@ -156,5 +168,4 @@ class Window:
     def close_window(self):
         """Metoda zamykająca okno i kończąca program"""
         pygame.quit()
-
-
+        quit()
