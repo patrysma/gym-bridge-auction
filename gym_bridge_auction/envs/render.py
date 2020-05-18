@@ -1,19 +1,15 @@
-from gym import error
-from gym_bridge_auction.envs.game import *
-from gym_bridge_auction.envs.bridge_auction_env import *
+from gym_bridge_auction.envs.game import NAMES, spade, heart, diamond, club
 import pygame
 
 
 class Window:
-    """Klasa określająca interfejs graficzny"""
+    """Interfejs graficzny"""
 
     def __init__(self, north_hands_display=None, east_hands_display=None, south_hands_display=None,
                  west_hands_display=None, who_is_dealer=None):
-        """Konstrukctor klasy - utworzenie niezmiennych elementów interfejsu graficznego,
-           gdzie podane parametry to: ręce poszczególnych graczy oraz nazwę gracza, który jest rozdającym
-           - zmienne typu str"""
+        """Utworzenie niezmiennych elementów interfejsu graficznego,
+        gdzie podane parametry to: ręce poszczególnych graczy oraz nazwę gracza, który jest rozdającym"""
 
-        # inicjalizacja PyGame
         pygame.init()
         # defincja wymiarów okna i tytułu
         title = 'Bridge auction environment'
@@ -23,7 +19,7 @@ class Window:
         pygame.display.set_caption(title)
         # odmierzanie czasu w aplikacji
         self.clock = pygame.time.Clock()
-        # defincja kolorów interfejsu
+        # defincja kolorów
         self.colours = {'green': (60, 120, 70),
                         'red': (255, 0, 0),
                         'orange': (199, 60, 7),
@@ -80,65 +76,58 @@ class Window:
         pygame.display.update()
 
         # wartości etykiet zmiennych
-        # ręka poszczególnych graczy
-        self.west_hands_display = west_hands_display
-        self.south_hands_display = south_hands_display
-        self.east_hands_display = east_hands_display
-        self.north_hands_display = north_hands_display
-        # wartości kontraktów i kto jest rozdającym
-        self.players_contracts_display = None
+        # kto jest rozdającym
         self.who_is_dealer = who_is_dealer
-        self.last_contract_display = None
         # wyświetlenie rąk graczy
-        self.create_list_of_labels(self.north_hands_display, 600, 200)
-        self.create_list_of_labels(self.east_hands_display, 1100, 400)
-        self.create_list_of_labels(self.south_hands_display, 600, 600)
-        self.create_list_of_labels(self.west_hands_display, 100, 400)
+        self.create_list_of_labels(north_hands_display, 600, 200)
+        self.create_list_of_labels(east_hands_display, 1100, 400)
+        self.create_list_of_labels(south_hands_display, 600, 600)
+        self.create_list_of_labels(west_hands_display, 100, 400)
         pygame.display.update()
 
     def create_colours_label(self):
-        """Metoda tworząca etykiety poszczególnych kolorów kart"""
+        """Utworzenie etykiet dla kolorów kart"""
 
-        spade_label = self.font.render(spade, 1, self.colours['black'])
-        heart_label = self.font.render(heart, 1, self.colours['red'])
-        diamond_label = self.font.render(diamond, 1, self.colours['orange'])
-        club_label = self.font.render(club, 1, self.colours['grey'])
+        spade_label = self.font.render(spade, True, self.colours['black'])
+        heart_label = self.font.render(heart, True, self.colours['red'])
+        diamond_label = self.font.render(diamond, True, self.colours['orange'])
+        club_label = self.font.render(club, True, self.colours['grey'])
 
         return [spade_label, heart_label, diamond_label, club_label]
 
     def place_labels(self, labels, x_pos, y_pos):
-        """Metoda umieszczająca listę etykiet na ekranie szeregowo,
-           gdzie poszczególne pratametry to:
-           -label - lista utworzonych obiektów tekstowych
-           -x_pos, y_pos - pozycje etykiety na ekranie"""
+        """Umieszczenie listy etykiet na ekranie szeregowo,
+        gdzie poszczególne parametry to:
+        label - lista utworzonych obiektów tekstowych
+        x_pos, y_pos - pozycje etykiety na ekranie"""
 
         for i in range(0, len(labels)):
             self.screen.blit(labels[i], (x_pos, y_pos + 50 * i))
 
     def create_mutable_labels(self, text, font):
-        """Metoda tworząca etykiety dla tekstu podanego jako parametru,
-           gdzie:
-           text - zmienna typu tekstowego
-           font - obiekt typu Font"""
+        """Utworzenie etykiety dla tekstu podanego jako parametr,
+        gdzie:
+        text - zmienna typu tekstowego
+        font - obiekt typu Font"""
 
         text_label = font.render(text, True, self.colours['black'], self.colours['ecru'])
 
         return text_label
 
     def create_list_of_labels(self, text, x_pos, y_pos):
-        """Metoda tworząca listę etykiet i ustawiająca ich poszczególne pozycje
-           gdzie:
-           text - zmienna typu teksowego
-           -x_pos, y_pos - pozycje etykiety na ekranie"""
+        """Utworzenie listy etykiet i ustawiająca ich poszczególne pozycje
+        gdzie:
+        text - zmienna typu teksowego
+        x_pos, y_pos - pozycje etykiety na ekranie"""
 
         label_list = [self.create_mutable_labels(text[i], self.font) for i in range(0, 4)]
         self.place_labels(label_list, x_pos, y_pos)
 
     def update_view(self, last_contract, north_contract, east_contract, south_contract, west_contract, win_pair, score,
                     optimum_score, frames_per_second):
-        """Metoda aktualizująca zmieniające się etykiety z tekstem
-           gdzie podane parametry to: ostatni najwyższy kontrakt, kontrakty poszczególnych graczy, nazwy par, zapis,
-           optymalny zapis według solvera oraz ilość klatek na sekundę"""
+        """Aktualizacja zmieniających się etykiet z tekstem, gdzie podane parametry to:
+        ostatni najwyższy kontrakt, kontrakty poszczególnych graczy, nazwy par, zapis, optymalny zapis według solvera
+        oraz ilość klatek na sekundę"""
 
         # prostokąty zakrywające poprzednie wartości zmieniającego się tekstu
         pygame.draw.rect(self.screen, self.colours['green'], pygame.Rect(250, 10, 200, 200))
@@ -146,16 +135,15 @@ class Window:
         # wyświetlenie rozdającego
         self.screen.blit(self.create_mutable_labels(self.who_is_dealer, self.font), (1250, 60))
         # wyświetlenie kontraktów oraz punktów
-        self.players_contracts_display = [north_contract, east_contract, south_contract, west_contract]
-        self.last_contract_display = last_contract
-        self.screen.blit(self.create_mutable_labels(self.last_contract_display, self.font), (1250, 10))
+        players_contracts_display = [north_contract, east_contract, south_contract, west_contract]
+        self.screen.blit(self.create_mutable_labels(last_contract, self.font), (1250, 10))
         self.screen.blit(self.create_mutable_labels(win_pair[0], self.font), (1250, 110))
         self.screen.blit(self.create_mutable_labels(win_pair[1], self.font), (1350, 110))
         self.screen.blit(self.create_mutable_labels(str(score[0]), self.font), (1250, 160))
         self.screen.blit(self.create_mutable_labels(str(score[1]), self.font), (1350, 160))
         self.screen.blit(self.create_mutable_labels(str(optimum_score[0]), self.font), (1250, 210))
         self.screen.blit(self.create_mutable_labels(str(optimum_score[1]), self.font), (1350, 210))
-        self.create_list_of_labels(self.players_contracts_display, 250, 10)
+        self.create_list_of_labels(players_contracts_display, 250, 10)
         # aktualizacja i ustawienie ilości klatek na sekundę
         pygame.display.update()
         self.clock.tick(frames_per_second)
@@ -166,6 +154,7 @@ class Window:
                 return
 
     def close_window(self):
-        """Metoda zamykająca okno i kończąca program"""
+        """Zamyknięcie okna i zakończenie pracy programu"""
+
         pygame.quit()
         quit()

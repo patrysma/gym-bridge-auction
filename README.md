@@ -31,14 +31,14 @@ Poszczególne liczby oznaczają różne odzywki licytacyjne oraz zapowiedzi: pas
 Przestrzeń obserwacji zdefiniowano następująco:
 
 ```python
-spaces.Dict({'whose turn': spaces.Discrete(self.n_players),
-             'whose next turn': spaces.Discrete(self.n_players),
+spaces.Dict({'whose turn': spaces.Discrete(self._n_players),
+             'whose next turn': spaces.Discrete(self._n_players),
              'LAST_contract': spaces.Discrete(36),
              'NORTH_contract': spaces.Discrete(36),
              'EAST_contract': spaces.Discrete(36),
              'SOUTH_contract': spaces.Discrete(36),
              'WEST_contract': spaces.Discrete(36),
-             'winning_pair': spaces.Discrete(self.n_players / 2),
+             'winning_pair': spaces.Discrete(self._n_players / 2),
              'double/redouble': spaces.Discrete(3)})
 ```
 - Stan 'whose turn' oznacza kto licytował. Oznaczenia poszczególnych liczb przedstawiono poniżej.
@@ -212,22 +212,22 @@ Implementacja funkcji nagrody jest następująca:
 
 ```python
 if action == 0:
-    self.reward = 0
+    self._reward = 0
 else:
-    bind_trump = self.available_contracts[action].suit
-    bind_number = self.available_contracts[action].number
-    max_contract = self.players[player_index].makeable_contracts[bind_trump]
-    max_number_of_tricks = self.players[player_index].number_of_trick[bind_trump]
+    bind_trump = self._available_contracts[action].suit
+    bind_number = self._available_contracts[action].number
+    max_contract = self._players[player_index].makeable_contracts[bind_trump]
+    max_number_of_tricks = self._players[player_index].number_of_trick[bind_trump]
 
     if max_contract == 0:
-        self.reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
+        self._reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
     elif bind_number <= max_contract:
         if bind_trump == 'NT':
-            self.reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
+            self._reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
         else:
-            self.reward = POINTS[bind_trump] * bind_number
+            self._reward = POINTS[bind_trump] * bind_number
 
-        if (bind_trump in self.players[player_index].max_contract_trump) and bind_number == max_contract:
-            self.reward += POINTS['BONUS']
+        if (bind_trump in self._players[player_index].max_contract_trump) and bind_number == max_contract:
+            self._reward += POINTS['BONUS']
 ```
 

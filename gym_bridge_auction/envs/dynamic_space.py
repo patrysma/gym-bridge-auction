@@ -1,11 +1,10 @@
-import gym
 from gym import spaces
 import numpy as np
 from gym_bridge_auction.envs.game import WIN_PAIR
 
 
 class Dynamic(spaces.Discrete):
-    """Klasa definiująca zmieniającą się przestrzeń akcji po wykonaniu kolejnych kroków"""
+    """Zmieniającą się przestrzeń akcji po wykonaniu kolejnych kroków"""
 
     def __init__(self, max_space):
         super().__init__(max_space)
@@ -26,17 +25,25 @@ class Dynamic(spaces.Discrete):
         """Zdefiniowanie dostępnych działań dla agenta w danym kroku"""
 
         if not (action in (0, 36, 37)):
-            self.new_n = action  # zmniejaszanie się dostępnych odzywek licytacyjnych
+            # zmniejaszanie się dostępnych odzywek licytacyjnych
+            self.new_n = action
 
         self.available_actions = list(range(0, self.new_n))
 
-        if  (not state['winning_pair'] is None) and state['double/redouble'] == 0 and not (state['whose next turn'] in WIN_PAIR[state['winning_pair']]):
+        if (not (state['winning_pair'] is None)) and state['double/redouble'] == 0 and \
+                not (state['whose next turn'] in WIN_PAIR[state['winning_pair']]):
             # dostępna kontra
             self.available_actions.append(36)
 
         elif state['double/redouble'] == 1 and (state['whose next turn'] in WIN_PAIR[state['winning_pair']]):
             # dostępna rekontra
             self.available_actions.append(37)
+
+    def reset(self):
+        """Przywrócenie początkowej przestrzeni akcji"""
+
+        self.new_n = self.n - 2
+        self.available_actions = list(range(0, self.new_n))
 
     def contains(self, x):
         """Sprawdzenie czy wprowadzone działanie jest poprawnego typu"""
@@ -45,4 +52,5 @@ class Dynamic(spaces.Discrete):
 
     def __eq__(self, other):
         """Porównanie obiektów"""
+
         return isinstance(other, Dynamic) and self.n == other.n
