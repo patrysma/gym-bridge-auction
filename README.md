@@ -124,67 +124,202 @@ Pierwszy epizod:
 
 ```
 Observation space:
-{'whose turn': None, 'whose next turn': 3, 'LAST_contract': None, 'NORTH_contract': None, 'EAST_contract': None, 'SOUTH_contract': None, 'WEST_contract': None, 'winning_pair': None, 'double/redouble': 0}
+{'whose turn': None, 'whose next turn': 2, 'LAST_contract': None, 'Player_contract': None, 'winning_pair': None, 'double/redouble': 0, 'Players hand': [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0], [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]], 'pair score/optimum score': array([   0,    0, -300,  300])}
 Observation space:
-{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 14, 'double/redouble': 0, 'winning_pair': 1, 'WEST_contract': 14}
-Reward: -300
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 20, 'double/redouble': 0, 'Player_contract': 20, 'winning_pair': 0, 'pair score/optimum score': array([-450,  450, -300,  300])}
+Reward: [-150, 150]
 Observation space:
-{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 7, 'double/redouble': 0, 'winning_pair': 0, 'NORTH_contract': 7}
-Reward: -450
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 14, 'double/redouble': 0, 'Player_contract': 14, 'winning_pair': 1, 'pair score/optimum score': array([ 150, -150, -300,  300])}
+Reward: [450, -450]
 Observation space:
-{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 7, 'double/redouble': 1, 'winning_pair': 0, 'EAST_contract': 36}
-Reward: 1000
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 7, 'double/redouble': 0, 'Player_contract': 7, 'winning_pair': 0, 'pair score/optimum score': array([-200,  200, -300,  300])}
+Reward: [100, -100]
 Observation space:
-{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 7, 'double/redouble': 1, 'winning_pair': 0, 'SOUTH_contract': 0}
-Reward: 0
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 7, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 0, 'pair score/optimum score': array([-800,  800, -300,  300])}
+Reward: [-500, 500]
 Observation space:
-{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 6, 'double/redouble': 0, 'winning_pair': 1, 'WEST_contract': 6}
-Reward: -200
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 7, 'double/redouble': 2, 'Player_contract': 37, 'winning_pair': 0, 'pair score/optimum score': array([-1600,  1600,  -300,   300])}
+Reward: [-1300, 1300]
 Observation space:
-{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 4, 'double/redouble': 0, 'winning_pair': 0, 'NORTH_contract': 4}
-Reward: -300
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 1, 'winning_pair': 1, 'pair score/optimum score': array([ 200, -200, -300,  300])}
+Reward: [500, -500]
 Observation space:
-{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 4, 'double/redouble': 1, 'winning_pair': 0, 'EAST_contract': 36}
-Reward: 1000
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 200, -200, -300,  300])}
+Reward: [500, -500]
 Observation space:
-{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 2, 'double/redouble': 0, 'winning_pair': 0, 'SOUTH_contract': 2}
-Reward: -500
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 200, -200, -300,  300])}
+Reward: [500, -500]
 Observation space:
-{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'WEST_contract': 1}
-Reward: -250
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 1, 'pair score/optimum score': array([ 800, -800, -300,  300])}
+Reward: [1100, -1100]
 Observation space:
-{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'NORTH_contract': 0}
-Reward: 0
-Observation space:
-{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'EAST_contract': 0}
-Reward: 0
-Observation space:
-{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'SOUTH_contract': 0}
-Reward: 0
-Episode finished after 12 timesteps
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 2, 'Player_contract': 37, 'winning_pair': 1, 'pair score/optimum score': array([ 1600, -1600,  -300,   300])}
+Reward: [1900, -1900]
+Episode 1 finished after 10 timesteps
 ```
 
 Drugi epizod:
 
 ```
 Observation space:
-{'whose turn': None, 'whose next turn': 3, 'LAST_contract': None, 'NORTH_contract': None, 'EAST_contract': None, 'SOUTH_contract': None, 'WEST_contract': None, 'winning_pair': None, 'double/redouble': 0}
+{'whose turn': None, 'whose next turn': 2, 'LAST_contract': None, 'Player_contract': None, 'winning_pair': None, 'double/redouble': 0, 'Players hand': [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0], [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]], 'pair score/optimum score': array([   0,    0, -300,  300])}
 Observation space:
-{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 17, 'double/redouble': 0, 'winning_pair': 1, 'WEST_contract': 17}
-Reward: -50
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 35, 'double/redouble': 0, 'Player_contract': 35, 'winning_pair': 0, 'pair score/optimum score': array([-300,  300, -300,  300])}
+Reward: [0, 0]
 Observation space:
-{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 2, 'double/redouble': 0, 'winning_pair': 0, 'NORTH_contract': 2}
-Reward: -500
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 15, 'double/redouble': 0, 'Player_contract': 15, 'winning_pair': 1, 'pair score/optimum score': array([  50,  -50, -300,  300])}
+Reward: [350, -350]
 Observation space:
-{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 0, 'winning_pair': 1, 'EAST_contract': 1}
-Reward: -250
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 15, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 1, 'pair score/optimum score': array([ 100, -100, -300,  300])}
+Reward: [400, -400]
 Observation space:
-{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 1, 'winning_pair': 1, 'SOUTH_contract': 36}
-Reward: 1000
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 10, 'double/redouble': 0, 'Player_contract': 10, 'winning_pair': 1, 'pair score/optimum score': array([ 100, -100, -300,  300])}
+Reward: [400, -400]
 Observation space:
-{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 2, 'winning_pair': 1, 'WEST_contract': 37}
-Reward: 1000
-Episode finished after 5 timesteps
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 6, 'double/redouble': 0, 'Player_contract': 6, 'winning_pair': 0, 'pair score/optimum score': array([-400,  400, -300,  300])}
+Reward: [-100, 100]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 5, 'double/redouble': 0, 'Player_contract': 5, 'winning_pair': 1, 'pair score/optimum score': array([ 150, -150, -300,  300])}
+Reward: [450, -450]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 5, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 1, 'pair score/optimum score': array([ 500, -500, -300,  300])}
+Reward: [800, -800]
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 2, 'double/redouble': 0, 'Player_contract': 2, 'winning_pair': 1, 'pair score/optimum score': array([ 400, -400, -300,  300])}
+Reward: [700, -700]
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 2, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 1, 'pair score/optimum score': array([ 2000, -2000,  -300,   300])}
+Reward: [2300, -2300]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 2, 'double/redouble': 2, 'Player_contract': 37, 'winning_pair': 1, 'pair score/optimum score': array([ 4000, -4000,  -300,   300])}
+Reward: [4300, -4300]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 2, 'double/redouble': 2, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 4000, -4000,  -300,   300])}
+Reward: [4300, -4300]
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 2, 'double/redouble': 2, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 4000, -4000,  -300,   300])}
+Reward: [4300, -4300]
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 1, 'winning_pair': 0, 'pair score/optimum score': array([-450,  450, -300,  300])}
+Reward: [-150, 150]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-450,  450, -300,  300])}
+Reward: [-150, 150]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-450,  450, -300,  300])}
+Reward: [-150, 150]
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 0, 'pair score/optimum score': array([-2300,  2300,  -300,   300])}
+Reward: [-2000, 2000]
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-2300,  2300,  -300,   300])}
+Reward: [-2000, 2000]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-2300,  2300,  -300,   300])}
+Reward: [-2000, 2000]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-2300,  2300,  -300,   300])}
+Reward: [-2000, 2000]
+Episode 2 finished after 19 timesteps
+```
+
+Trzeci epizod:
+
+```
+Observation space:
+{'whose turn': None, 'whose next turn': 2, 'LAST_contract': None, 'Player_contract': None, 'winning_pair': None, 'double/redouble': 0, 'Players hand': [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0], [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]], 'pair score/optimum score': array([   0,    0, -300,  300])}
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 32, 'double/redouble': 0, 'Player_contract': 32, 'winning_pair': 0, 'pair score/optimum score': array([ 110, -110, -300,  300])}
+Reward: [410, -410]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 1, 'winning_pair': 1, 'pair score/optimum score': array([ 200, -200, -300,  300])}
+Reward: [500, -500]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 1, 'pair score/optimum score': array([ 800, -800, -300,  300])}
+Reward: [1100, -1100]
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 800, -800, -300,  300])}
+Reward: [1100, -1100]
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 800, -800, -300,  300])}
+Reward: [1100, -1100]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 800, -800, -300,  300])}
+Reward: [1100, -1100]
+Episode 3 finished after 6 timesteps
+```
+
+Czwarty epizod:
+
+```
+Observation space:
+{'whose turn': None, 'whose next turn': 2, 'LAST_contract': None, 'Player_contract': None, 'winning_pair': None, 'double/redouble': 0, 'Players hand': [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0], [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]], 'pair score/optimum score': array([   0,    0, -300,  300])}
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 23, 'double/redouble': 0, 'Player_contract': 23, 'winning_pair': 0, 'pair score/optimum score': array([-150,  150, -300,  300])}
+Reward: [150, -150]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 19, 'double/redouble': 0, 'Player_contract': 19, 'winning_pair': 1, 'pair score/optimum score': array([ 100, -100, -300,  300])}
+Reward: [400, -400]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 13, 'double/redouble': 0, 'Player_contract': 13, 'winning_pair': 0, 'pair score/optimum score': array([-250,  250, -300,  300])}
+Reward: [50, -50]
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 8, 'double/redouble': 0, 'Player_contract': 8, 'winning_pair': 1, 'pair score/optimum score': array([ 350, -350, -300,  300])}
+Reward: [650, -650]
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 8, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 1, 'pair score/optimum score': array([ 1700, -1700,  -300,   300])}
+Reward: [2000, -2000]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 1, 'winning_pair': 1, 'pair score/optimum score': array([ 200, -200, -300,  300])}
+Reward: [500, -500]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 1, 'pair score/optimum score': array([ 800, -800, -300,  300])}
+Reward: [1100, -1100]
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 800, -800, -300,  300])}
+Reward: [1100, -1100]
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 1, 'pair score/optimum score': array([ 800, -800, -300,  300])}
+Reward: [1100, -1100]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 2, 'Player_contract': 37, 'winning_pair': 1, 'pair score/optimum score': array([ 1600, -1600,  -300,   300])}
+Reward: [1900, -1900]
+Episode 4 finished after 10 timesteps
+```
+
+Piąty epizod:
+
+```
+Observation space:
+{'whose turn': None, 'whose next turn': 2, 'LAST_contract': None, 'Player_contract': None, 'winning_pair': None, 'double/redouble': 0, 'Players hand': [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0], [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]], 'pair score/optimum score': array([   0,    0, -300,  300])}
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 21, 'double/redouble': 0, 'Player_contract': 21, 'winning_pair': 0, 'pair score/optimum score': array([-250,  250, -300,  300])}
+Reward: [50, -50]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 3, 'double/redouble': 0, 'Player_contract': 3, 'winning_pair': 1, 'pair score/optimum score': array([ 400, -400, -300,  300])}
+Reward: [700, -700]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 2, 'double/redouble': 0, 'Player_contract': 2, 'winning_pair': 0, 'pair score/optimum score': array([-250,  250, -300,  300])}
+Reward: [50, -50]
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 2, 'double/redouble': 0, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-250,  250, -300,  300])}
+Reward: [50, -50]
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 0, 'Player_contract': 1, 'winning_pair': 0, 'pair score/optimum score': array([-450,  450, -300,  300])}
+Reward: [-150, 150]
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 36, 'winning_pair': 0, 'pair score/optimum score': array([-2300,  2300,  -300,   300])}
+Reward: [-2000, 2000]
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-2300,  2300,  -300,   300])}
+Reward: [-2000, 2000]
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-2300,  2300,  -300,   300])}
+Reward: [-2000, 2000]
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 1, 'Player_contract': 0, 'winning_pair': 0, 'pair score/optimum score': array([-2300,  2300,  -300,   300])}
+Reward: [-2000, 2000]
+Episode 5 finished after 9 timesteps
 ```
 
 
