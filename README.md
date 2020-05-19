@@ -114,9 +114,9 @@ for i_episode in range(5):
 env.close()
 ```
 
-# Działanie z kontrą i rekontrą
+# Działanie środowiska z interfejsem graficznym
 
-[![Watch the video](https://i.imgur.com/aTB0rmc.jpg)](https://youtu.be/zd-wa3wE75I)
+[![Watch the video](https://i.imgur.com/UIgSQDV.jpg)](https://youtu.be/VSm32FQY6Bk)
 
 Poniżej przedstawiono wartości nagrody i przestrzeń obserwacji dla powyższego działania.
 
@@ -187,47 +187,5 @@ Reward: 1000
 Episode finished after 5 timesteps
 ```
 
-# Algorytm wyznaczenia nagrody
 
-Oznaczenia:
-- dek_licz_lew - deklarowana liczba lew przez gracza podczas licytacji (dla danego koloru atutowego)
-- maks_dek_licz_lew - maksymalna liczba lew jaką gracz może wziąć z partnerem przy ustalonym mianie kontraktu
-- mnożnik_kary - czyli kara za możliwość wzięcia mniej lew niż zadeklarowno (-50 za każdą)
-- mnożnik_koloru - wartość punktowa za wzięcie lewy do wyznaczenia nagrody w zależności od miana (20 dla C/D; 30 dla H/S; 40 za pierwszą i 30 za kolejne dla NT)
-- bonus - wartość dodatkowa za najbardziej punktowany kontrakt (50 pkt)
-
-```
-Jeśli kontrakt to pas:
-  nagroda = 0
-Jeśli kontrakt jest różny od pasu:
-  Jeśli kontrakt jest nierealizowalny według solvera:
-    nagroda = mnożnik_kary * (dek_licz_lew - maks_dek_licz_lew)
-  Jeśli kontrakt jest realizowalny:
-    Jeśli dek_licz_lew <= maks_dek_licz_lew:
-      nagroda = mnożnik_koloru * (dek_licz_lew - maks_dek_licz_lew)
-      Jeśli kontrakt jest równy najbardziej punktowanemu:
-        nagroda = nagroda + bonus
-```
-Implementacja funkcji nagrody jest następująca:
-
-```python
-if action == 0:
-    self._reward = 0
-else:
-    bind_trump = self._available_contracts[action].suit
-    bind_number = self._available_contracts[action].number
-    max_contract = self._players[player_index].makeable_contracts[bind_trump]
-    max_number_of_tricks = self._players[player_index].number_of_trick[bind_trump]
-
-    if max_contract == 0:
-        self._reward = POINTS['FAIL'] * (bind_number + 6 - max_number_of_tricks)
-    elif bind_number <= max_contract:
-        if bind_trump == 'NT':
-            self._reward = POINTS['NT'][0] + (bind_number - 1) * POINTS['NT'][1]
-        else:
-            self._reward = POINTS[bind_trump] * bind_number
-
-        if (bind_trump in self._players[player_index].max_contract_trump) and bind_number == max_contract:
-            self._reward += POINTS['BONUS']
-```
 
