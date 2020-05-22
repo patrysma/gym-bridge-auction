@@ -43,9 +43,9 @@ class AuctionEnv(gym.Env):
         
         Przestrzeń obserwacji:
             Typ: Dict - zawierający stany: 'whose turn', 'whose next turn', 'LAST_contract', 'Player_contract', 'winning_pair',
-            'Players hand, 'pair score/optimum score'.
+            'double/redouble', 'Players hand', 'pair score/optimum score'.
             
-            Stan 'whose turn':
+            Stan 'whose turn' - oznacza który z graczy licytował w danym kroku:
                 Typ: Discrete(4)
                 
                 | Liczba | Nazwa gracza |
@@ -53,8 +53,68 @@ class AuctionEnv(gym.Env):
                 | 1 | E |
                 | 2 | S |
                 | 3 | W |
-        
-        
+                
+            Stan 'whose next turn' - oznacza gracza, który ma licytować następny w kolejności:
+                Typ: Discrete(4)
+                
+                 Oznaczenia liczb zgodne ze stanem 'whose turn'.
+                 
+            Stan 'LAST_contract' -  oznacza najwyższy zgłoszony kontrakt po każdym z kroków:
+                Typ: Discrete(36)
+                
+                Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji (oprócz wartości 36 i 37, które w tym przypadku
+                nie występują).
+                
+            Stan 'Player_contract' - oznacza odzywkę/zapowiedź gracza licytującego w danym kroku:
+                Typ: Discrete(38)
+                
+                Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji.
+            
+            Stan 'winning_pair' -  oznacza, która z par graczy ma w danym kroku najwyższy zgłoszony kontrakt 
+            (aktualnie wygrywa licytację):
+                Typ: Discrete(2)
+                
+                | Liczba | Nazwa pary |
+                | 0 | N/S |
+                | 1 | E/W |
+                
+            Stan 'double/redouble' - oznacza czy wystąpiła kontra, rekontra lub żadne z nich:
+                Typ: Discrete(3)
+                
+                | Liczba | Obserwacja |
+                | 0 | no double/redouble |
+                | 1 | double - 'X' |
+                | 2 | redouble - 'XX' |
+                            
+            Stan 'Players hand' - oznacza reprezentację rąk graczy w formie 0/1:
+                Typ: Tuple(MultiDiscrete, MultiDiscrete, MultiDiscrete, MultiDiscrete)
+                
+                Kolejność rąk graczy jest następująca: N, E, S, W.
+                
+                Reprezentacja ręki danego gracza jest w formie listy 52-elementowej. Każdy jej element to jedna z cyfr:
+                0 (nie posiada karty), 1 (posiada kartę).
+                
+                Karty ustawione są od 2 do A kolejno kolorami trefl, karo, kier i na końcu pik:
+                [2♣, ..., A♣, 2♦, ..., A♦, 2♥, ..., A♥, 2♠, ..., A♠]
+
+            Stan 'pair score/optimum score' - oznacza zapis brydżowy w danym momencie licytacji oraz optymalną wartość punktów 
+            według Double Dummy Solver dla każdej z par:
+                Typ: Box(4,), typ danych: int
+                
+                | Liczba | Obserwacja | Min | Max |
+                | 0 | Zapis pary N-S | -7000 | 7000 |
+                | 1 | Zapis pary E-W | -7000 | 7000 |
+                | 2 | Optymalne punkty pary N-S | -7000 | 7000 |
+                | 3 | Optymalne punkty pary E-W | -7000 | 7000 |
+                
+               
+        Nagroda:
+                
+                
+                
+            
+     
+                
         """
 
     metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 1}
@@ -103,7 +163,7 @@ class AuctionEnv(gym.Env):
         self.observation_space = spaces.Dict({'whose turn': spaces.Discrete(self._n_players),
                                               'whose next turn': spaces.Discrete(self._n_players),
                                               'LAST_contract': spaces.Discrete(36),
-                                              'Player_contract': spaces.Discrete(36),
+                                              'Player_contract': spaces.Discrete(38),
                                               'winning_pair': spaces.Discrete(self._n_players / 2),
                                               'double/redouble': spaces.Discrete(3),
                                               'Players hand': spaces.Tuple(
@@ -120,9 +180,10 @@ class AuctionEnv(gym.Env):
         # sprawdzenie czy wykonane działanie przez agenta jest możliwe
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
 
-        # wyznaczenie przestzreni obserwacji i nagrody
+        # wyznaczenie przestrzeni obserwacji i nagrody
         state = self._get_game_state(action, False)
         self._reward = self._get_reward(state, action)
+        # dodanie do przestrzeni obserwacji zapisu oraz optymalnych punktów dla każdej z par
         state['pair score/optimum score'] = np.array([self._score[0], self._score[1], self._optimum_contract_score[0],
                                                       self._optimum_contract_score[1]])
         self._index_order += 1
@@ -328,7 +389,7 @@ class AuctionEnv(gym.Env):
                                                           self._optimum_contract_score[0],
                                                           self._optimum_contract_score[1]])
 
-            # reprezentacja rąk graczy w formie 0/1 jest dostępna tylko po zresetowaniu stanu środowiska
+            # reprezentacja rąk graczy w formie 0/1 jest dostępna tylko zaraz po zresetowaniu stanu środowiska
             for player in enumerate(self._players):
                 state['Players hand'][player[0]] = player[1].hand_representation
 
