@@ -14,6 +14,8 @@ class AuctionEnv(gym.Env):
     Jest to przykład środowiska, gdzie poszczególni agenci nie dysponują pełnym zestawem informacji na temat stanu gry.
     Mają dostęp tylko do historii licytacji oraz własnych kart, ręce przeciwników nie są znane.
     
+    Agenci wykonują kolejno pojedyńcze akcje (licytują)?
+    
     Przestrzeń akcji:
         Typ: Dynamic(38) - przestrzeń dziedzicząca po Discrete
         
@@ -109,13 +111,31 @@ class AuctionEnv(gym.Env):
                 
                
         Nagroda:
-                
-                
-                
+            W każdym kroku wyznaczona jest nagroda wartościująca działania agentów.
             
-     
-                
-        """
+            Postać: Lista 2-elementowa, gdzie elementy to liczby całkowite z zakresu od -9280 do 9280.
+            
+            | Indeks | Nazwa pary |
+            | 0 | N/S |
+            | 1 | E/W |
+            
+            Nagroda to różnica pomiędzy otrzymanym zapisem brydżowym pary wygrywającej licytację a optymalną dla niej wartością 
+            punktową (wynik z Double Dummy Solver), gdy wszyscy gracze licytują idealnie. Zapis brydżowy jest wyznaczony na podstawie 
+            zgłoszonego kontraktu i rezultatów z Double Dummy Solver dotyczących realizowalności obowiązującego zobowiązania, co do
+            ilości lew jakie może wziać dana para przy ustalonym mianie.
+            
+            Nagroda dla pary, która przegrywa licytację jest wartością przeciwną nagrody pary wygrywającej.
+            
+        Stan początkowy środowiska:
+            
+
+        Koniec epizodu (licytacji):
+            Licytacja, czyli jeden epizod kończy się w następujących przypadkach:
+            - wystąpienie kolejno trzech pasów po ustalonym kontrakcie,
+            - nie ustalono kontraktu - na początku licytacji wszyscy gracze spasowali,
+            - ostateczny kontrakt to 7NT, a po tym nastąpiła kontra i rekontra,
+            - zbyt mała liczba iteracji (kroków) w danym epizodzie nie pozwalająca na zakończenie licytacji 
+            według powyższych trzech powodów."""
 
     metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 1}
 
