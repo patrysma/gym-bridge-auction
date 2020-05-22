@@ -10,7 +10,52 @@ from gym_bridge_auction.envs.render import Window
 
 
 class AuctionEnv(gym.Env):
-    """Środowisko wieloagentowe (czterech graczy) symulujące licytację brydżową."""
+    """Środowisko wieloagentowe (czterech graczy) symulujące licytację brydżową. 
+    Jest to przykład środowiska, gdzie poszczególni agenci nie dysponują pełnym zestawem informacji na temat stanu gry.
+    Mają dostęp tylko do historii licytacji oraz własnych kart, ręce przeciwników nie są znane.
+    
+    Przestrzeń akcji:
+        Typ: Dynamic(38) - przestrzeń dziedzicząca po Discrete
+        
+        | Liczba | Działanie |
+        | 0 | pass |
+        | 1 | 7NT |
+        | 2 |  7S |
+        | 3 | 7H |
+        | 4 | 7D |
+        | 5 | 7C |
+        | . | . |
+        | . | . |
+        | 31 | 1NT |
+        | 32 | 1S |
+        | 33 | 1H |
+        | 34 | 1D |
+        | 35 | 1C |
+        | 36 | double |
+        | 37 | redouble |
+        
+        Typ Dynamic to specjalnie zdefiniowana klasa, dziedzicząca po Discrete, zapewnająca zmieniającą się przestrzeń akcji
+        w kolejnych krokach licytacji. Zawiera ona w danym momencie tylko takie odzywki lub zapowiedzi (kontra, rekontra, pas),
+        które może zgłosić gracz podczas licytacji, według zasad brydża. W każdym etapie na przestrzeń akcji składają się: odzywki
+        wyższe w hierarchi od ostatniej zgłoszonej, zapowiedź pas oraz kontra (dostępna dla przeciwników pary, która zgłosiła ostatnią 
+        odzywkę) i rekontra (dostępna dla pary z najwyższą obecnie zgłoszoną odzywką po kontrze przeciwników). Na początku licytacji
+        dostępne są wszystkie odzywki i zapowiedź pas.
+        
+        Przestrzeń obserwacji:
+            Typ: Dict - zawierający stany: 'whose turn', 'whose next turn', 'LAST_contract', 'Player_contract', 'winning_pair',
+            'Players hand, 'pair score/optimum score'.
+            
+            Stan 'whose turn':
+                Typ: Discrete(4)
+                
+                | Liczba | Nazwa gracza |
+                | 0 | N |
+                | 1 | E |
+                | 2 | S |
+                | 3 | W |
+        
+        
+        """
 
     metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 1}
 
@@ -93,7 +138,7 @@ class AuctionEnv(gym.Env):
         return state, self._reward, done, {}
 
     def reset(self):
-        """Reset środowiska i przywrócenie początkowego stanu licytacji"""
+        """Reset środowiska i przywrócenie początkowego stanu licytacji oraz początkowej przestrzeni akcji (wszystkie odzywki + pas)"""
 
         self._viewer = None
         self._index_order = 0
