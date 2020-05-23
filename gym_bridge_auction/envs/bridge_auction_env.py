@@ -207,7 +207,24 @@ class AuctionEnv(gym.Env):
         self.reset()
 
     def step(self, action):
-        """"""
+        """Przesuwa licytację o krok do gracza następnego w kolejności oraz wyznacza dostępną dla niego przestrzeń akcji.
+        
+        Parametr:
+            action - działanie agenta (zgłoszona odzywka z dostępnej przestrzeni akcji), który zgodnie z ustaloną kolejnością 
+            powinien licytować
+                Typ: int
+            
+        Zwraca:
+            state - stan środowiska po wykonaniu działania przez agenta
+                Typ: dict
+                
+            reward - nagroda dla każdej z par po zgłoszeniu odzywki/zapowiedzi przez agenta
+                Typ: list
+                
+            done - informacja o końcu licytacji
+                Typ: bool
+                
+                Wartość True oznacza koniec epizodu."""
 
         # sprawdzenie czy wykonane działanie przez agenta jest możliwe
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
