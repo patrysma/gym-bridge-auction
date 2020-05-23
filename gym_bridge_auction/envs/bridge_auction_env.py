@@ -210,21 +210,23 @@ class AuctionEnv(gym.Env):
         """Przesuwa licytację o krok do gracza następnego w kolejności oraz wyznacza dostępną dla niego przestrzeń akcji.
         
         Parametr:
-            action - działanie agenta (zgłoszona odzywka z dostępnej przestrzeni akcji), który zgodnie z ustaloną kolejnością 
+            action (int) - działanie agenta (zgłoszona odzywka z dostępnej przestrzeni akcji), który zgodnie z ustaloną kolejnością 
             powinien licytować
-                Typ: int
             
         Zwraca:
-            state - stan środowiska po wykonaniu działania przez agenta
-                Typ: dict
+            state, reward, done, info : tuple
+                state (dict) - stan środowiska po wykonaniu działania przez agenta
                 
-            reward - nagroda dla każdej z par po zgłoszeniu odzywki/zapowiedzi przez agenta
-                Typ: list
+                reward (list) - nagroda dla każdej z par po zgłoszeniu odzywki/zapowiedzi przez agenta
+                    
+                    reward[0] (int) - wartość nagrody dla pary N-S
+                    reward[1] (int) - wartość nagrody dla pary E-W
                 
-            done - informacja o końcu licytacji
-                Typ: bool
+                done (bool) - informacja o końcu licytacji
                 
-                Wartość True oznacza koniec epizodu."""
+                    Wartość True oznacza koniec epizodu.
+            
+                info (dict) - informacje diagnotyczne użyteczne przy debbugowaniu"""
 
         # sprawdzenie czy wykonane działanie przez agenta jest możliwe
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
@@ -268,7 +270,7 @@ class AuctionEnv(gym.Env):
         """Renderowanie bieżącego stanu środowiska z wykorzystniem wybranej opcji
         Obsługiwane są następujące tryby:
         - 'human' - interfejs graficzny
-        - 'console' - wersja konsolowa"""
+        - 'console' - wersja konsolowa."""
 
         if mode == 'human':
             # interfejs graficzny
