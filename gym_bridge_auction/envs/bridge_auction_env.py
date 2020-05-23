@@ -14,7 +14,11 @@ class AuctionEnv(gym.Env):
     Jest to przykład środowiska, gdzie poszczególni agenci nie dysponują pełnym zestawem informacji na temat stanu gry.
     Mają dostęp tylko do historii licytacji oraz własnych kart, ręce przeciwników nie są znane.
     
-    Agenci wykonują kolejno pojedyńcze akcje (licytują)?
+    Agenci w ustalonej kolejności zegarowej (rozpoczyna rozdający) wykonują pojedyńcze akcje (licytują) wybierane z dostępnej 
+    przestrzeni. Działania graczy są wartościowane za pomocą nagrody oceniającej skuteczność licytacji. W każdym kroku zwracana 
+    jest różnica od przypadku idealnego. Definiując funkcję nagrody wspomagano się dostępnymi narzędziami, czyli Double
+    Dummy Solver. Cel każdego z epizodów to ustalenie kontraktu, który stanowi zobowiązanie do wzięcia określonej liczby lew 
+    przez parę wygrywającą licytację.
     
     Przestrzeń akcji:
         Typ: Dynamic(38) - przestrzeń dziedzicząca po Discrete
@@ -61,7 +65,7 @@ class AuctionEnv(gym.Env):
                 
                  Oznaczenia liczb zgodne ze stanem 'whose turn'.
                  
-            Stan 'LAST_contract' -  oznacza najwyższy zgłoszony kontrakt po każdym z kroków:
+            Stan 'LAST_contract' -  oznacza najwyższy zgłoszony kontrakt po każdym z kroków, a po zakończeniu kontrakt ostateczny:
                 Typ: Discrete(36)
                 
                 Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji (oprócz wartości 36 i 37, które w tym przypadku
@@ -108,8 +112,7 @@ class AuctionEnv(gym.Env):
                 | 1 | Zapis pary E-W | -7000 | 7000 |
                 | 2 | Optymalne punkty pary N-S | -7000 | 7000 |
                 | 3 | Optymalne punkty pary E-W | -7000 | 7000 |
-                
-               
+                        
         Nagroda:
             W każdym kroku wyznaczona jest nagroda wartościująca działania agentów.
             
@@ -122,13 +125,21 @@ class AuctionEnv(gym.Env):
             Nagroda to różnica pomiędzy otrzymanym zapisem brydżowym pary wygrywającej licytację a optymalną dla niej wartością 
             punktową (wynik z Double Dummy Solver), gdy wszyscy gracze licytują idealnie. Zapis brydżowy jest wyznaczony na podstawie 
             zgłoszonego kontraktu i rezultatów z Double Dummy Solver dotyczących realizowalności obowiązującego zobowiązania, co do
-            ilości lew jakie może wziać dana para przy ustalonym mianie.
+            ilości lew jakie może wziać dana para przy ustalonym kolorze atutowym.
             
             Nagroda dla pary, która przegrywa licytację jest wartością przeciwną nagrody pary wygrywającej.
             
         Stan początkowy środowiska:
+            Po zresetowaniu środowiska do stanu początkowego ustalone zostają następujące stany przestrzeni obserwacji:
+            - 'Players hand' - reprezentacja rąk graczy w formie 0/1 jest dostępna tylko po użyciu funkcji reset(),
+            podczas kolejnych kroków epizodu przestaje być dostępna (należy ją od razu przypisać do innej zmiennej)
+            - 'pair score/optimum score' - tylko optymalne wartości puntowe dla par, zapis pozostaje nieustalony
+            - 'whose next turn' - indeks rozdającego, który rozpoczyna licytację
+            Pozostałe stany przestrzeni obserwacji pozostają niedefiniowane (wartość None).
             
-
+            Przestrzeń akcji zostaje przywrócona do początkowej ilości elementów - wszystkie odzywki plus zapowiedź pas 
+            (brak możliwości kontry lub rekontry).
+            
         Koniec epizodu (licytacji):
             Licytacja, czyli jeden epizod kończy się w następujących przypadkach:
             - wystąpienie kolejno trzech pasów po ustalonym kontrakcie,
@@ -196,6 +207,7 @@ class AuctionEnv(gym.Env):
         self.reset()
 
     def step(self, action):
+        """"""
 
         # sprawdzenie czy wykonane działanie przez agenta jest możliwe
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
