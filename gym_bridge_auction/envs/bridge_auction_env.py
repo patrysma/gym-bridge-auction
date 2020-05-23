@@ -217,10 +217,10 @@ class AuctionEnv(gym.Env):
             state, reward, done, info : tuple
                 state (dict) - stan środowiska po wykonaniu działania przez agenta
                 
-                reward (list) - nagroda dla każdej z par po zgłoszeniu odzywki/zapowiedzi przez agenta
+                reward (list<int>) - nagroda dla każdej z par po zgłoszeniu odzywki/zapowiedzi przez agenta
                     
-                    reward[0] (int) - wartość nagrody dla pary N-S
-                    reward[1] (int) - wartość nagrody dla pary E-W
+                    reward[0] - wartość nagrody dla pary N-S
+                    reward[1] - wartość nagrody dla pary E-W
                 
                 done (bool) - informacja o końcu licytacji
                 
