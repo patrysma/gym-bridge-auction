@@ -43,7 +43,7 @@ Korzystając z  drugiego sposobu oprócz środowiska zainstalują się niezbędn
 
 ## Przykład użycia środowiska
 
-Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów.
+Aby przetestować działanie środowiska z interfejsem graficznym można użyć poniższego kodu. Do testów wykorzystujących wersję konsolową należy przy renderowaniu podać opcję `'console'`, czyli: `env.render('console')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów.
 
 ```python
 import gym
@@ -53,20 +53,20 @@ env = gym.make('BridgeAuction-v0')
 
 for i_episode in range(5):
     observation = env.reset()
-    env.render('console')
+    env.render('human')
     print('Observation space:')
     print(observation)
 
     for i in range(100):
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
-        env.render('console')
+        env.render('human')
         print('Observation space:')
         print(observation)
         print('Reward: ' + str(reward))
 
         if done:
-            print("Episode finished after {} timesteps".format(i + 1))
+            print("Episode {} finished after {} timesteps".format(i_episode + 1, i + 1))
             break
 
 env.close()
