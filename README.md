@@ -41,7 +41,7 @@ python3 -m pip install -e .
 
 Korzystając z  drugiego sposobu oprócz środowiska zainstalują się niezbędne biblioteki  `pygame` , `cppyy` , `gym` i `numpy`.
 
-## Praca
+## Przykład użycia środowiska
 
 Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów.
 
@@ -74,11 +74,11 @@ env.close()
 
 ## Działanie środowiska z interfejsem graficznym
 
-Działanie kodu z poprzedniego punktu przedstawiono na poniższym filmiku.
+Poniższy filmik ukazuje działanie kodu z poprzedniego punktu.
 
 [![Watch the video](https://i.imgur.com/UIgSQDV.jpg)](https://youtu.be/VSm32FQY6Bk)
 
-Poniżej przedstawiono wartości nagrody i przestrzeń obserwacji dla powyższego działania.
+Poniżej znajdują wartości nagrody i przestrzeń obserwacji dla działania przedstawionego na filmiku.
 
 Pierwszy epizod:
 
