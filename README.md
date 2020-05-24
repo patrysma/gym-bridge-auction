@@ -39,7 +39,7 @@ lub
 python3 -m pip install -e .
 ```
 
-
+Korzystając z  drugiego sposobu oprócz środowiska zainstalują się niezbędne biblioteki  `pygame` , `cppyy` , `gym` i `numpy`.
 
 ## Praca
 
