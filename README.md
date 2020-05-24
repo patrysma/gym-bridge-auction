@@ -3,81 +3,17 @@
 Środowisko wieloagentowe (czterech graczy) symulujące licytację brydżową wykorzystujące interfejs biblioteki Gym. Jest to przykład środowiska, gdzie poszczególni agenci nie posiadają pełnego zestawu informacji na temat stanu gry. Mają dostęp tylko do historii licytacji oraz własnych kart, ręce przeciwników nie są znane.
     
 Gracze w ustalonej kolejności zegarowej (rozpoczyna rozdający) wykonują pojedyńcze akcje wybierane z dostępnej 
-przestrzeni (licytują). Działania agentów są wartościowane za pomocą nagrody oceniającej skuteczność licytacji. W każdym kroku zwracana jest różnica od przypadku idealnego. Definiując funkcję nagrody wspomagano się dostępnymi narzędziami, czyli Double Dummy Solver. Cel każdego z epizodów to ustalenie kontraktu, który stanowi zobowiązanie do wzięcia określonej liczby lew przez parę wygrywającą licytację.
+przestrzeni (licytują). Działania agentów są wartościowane za pomocą nagrody oceniającej skuteczność licytacji. W każdym kroku zwracana jest różnica od przypadku idealnego. Definiując funkcję nagrody wspomagano się dostępnymi narzędziami, tj. Double Dummy Solver Bo Haglunda. Cel każdego z epizodów to ustalenie kontraktu, który stanowi zobowiązanie do wzięcia określonej liczby lew przez parę wygrywającą licytację.
 
 ## Wymagania wstępne
 
-W tym środowisku agenci wykonują kolejno pojedyńcze akcje (licytują). Dlatego funkcja `step()` przyjmuje tylko jedno działanie agenta, który zgodnie z ustaloną kolejnością powinien licytować i zwraca jedną obserwację, nagrodę i informację czy należy zresetować środowisko (czy otrzymano 3 pasy po kolei po zgłoszonej odzywce, czyli zakończono licytację lub nikt nie zdeklarował kontraktu - wszyscy spasowali). 
+System operacyjny Linux (testy i implementacja na Ubuntu). 
 
-Przestarzeń akcji zdefiniowano następująco: 
-```python 
-spaces.Dynamic(38)
-``` 
-Poszczególne liczby oznaczają różne odzywki licytacyjne oraz zapowiedzi: pas, kontra, rekontra. Przestrzeń akcji zmniejsza się (gdy agenci nie pasują, bądź nie kontrują i nie rekontrują) w każdym kroku o odzywki niższe od ostatniej wypowiedzianej.  Dodatkowo dostępna są zapowiedzi kontra i rekontra. Kontra dostępna jest dla przeciwników pary, która zgłosiła ostatnią odzywkę. Natomiast rekontra pojawia się dla pary z najwyższą obecnie zgłoszoną odzywką po kontrze przeciwników. Tak zmieniającą się przestrzeń akcji zapewnia zdefiniowana klasa `Dynamic` dziedzicząca po `Discrete`.  Oznaczenia przedstawiono poniżej.
+Wersja Python 3.5+.
 
-| Liczba | Działanie |
-| ------ | --------- |
-| 0 | pass |
-| 1 | 7NT |
-| 2 |  7S |
-| 3 | 7H |
-| 4 | 7D |
-| 5 | 7C |
-| . | . |
-| . | . |
-| 31 | 1NT |
-| 32 | 1S |
-| 33 | 1H |
-| 34 | 1D |
-| 35 | 1C |
-| 36 | double |
-| 37 | redouble |
+Wymagana jest instalacja następujących bibliotek: `pygame` , `cppyy` , `gym` i `numpy`.
 
-Przestrzeń obserwacji zdefiniowano następująco:
-
-```python
-spaces.Dict({'whose turn': spaces.Discrete(self._n_players),
-             'whose next turn': spaces.Discrete(self._n_players),
-             'LAST_contract': spaces.Discrete(36),
-             'NORTH_contract': spaces.Discrete(36),
-             'EAST_contract': spaces.Discrete(36),
-             'SOUTH_contract': spaces.Discrete(36),
-             'WEST_contract': spaces.Discrete(36),
-             'winning_pair': spaces.Discrete(self._n_players / 2),
-             'double/redouble': spaces.Discrete(3)})
-```
-- Stan 'whose turn' oznacza kto licytował. Oznaczenia poszczególnych liczb przedstawiono poniżej.
-
-| Liczba | Nazwa gracza |
-| ------ | ------------ |
-| 0 | N |
-| 1 | E |
-| 2 | S |
-| 3 | W |
-
-- Stan 'whose next turn' oznacza gracza, który następny w kolejności ma licytować. Oznaczenia liczb zgodne ze stanem 'whose turn'.
-- Stan 'LAST_contract' oznacza ostateczny kontrakt po każdym z kroków. Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji.
-- Stany 'NORTH_contract', 'EAST_contract', 'SOUTH_contract', 'WEST_contract' są to odzywki poszczególnych graczy. Zmieniają się one, gdy odpowiedni gracz zalicytuje. Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji.
-- Stan 'winning_pair' oznacza która z par graczy ma w danym kroku najwyższy kontrakt. Oznaczenia liczb są następujące:
-
-| Liczba | Nazwa pary |
-| ------ | ---------- |
-| 0 | N/S |
-| 1 | E/W |
-
-- Stan 'double/redouble' oznacza czy wystąpiła kontra, rekontra lub żadne z nich. Oznaczenia przedstawiono poniżej.
-
-| Liczba | Działanie |
-| ------ | ---------- |
-| 0 | no double/redouble |
-| 1 | double - 'X' |
-| 2 | redouble - 'XX' |
-
-Działanie środowiska przetestowano w systemie Linux.
-
-Aby użyć środowiska konieczne jest zainstalowanie następujących bibliotek: `pygame` , `cppyy` i `gym`.
-
-Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` w swoim systemie, aby zaintalować biblioteki konieczne do użycia Double Dummy Solver. Można to zrobić w następujący sposób:
+Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` lub `/lib`w swoim systemie, aby zaintalować biblioteki konieczne do użycia Double Dummy Solver. Można to zrobić w następujący sposób:
 
 ```
 sudo cp /home/patrycja/PycharmProjects/gym_bridge_auction/gym_bridge_auction/envs/solver/dds_wrapper/libddswrapper.so /usr/lib
@@ -87,8 +23,25 @@ sudo ldconfig
 ldconfig -p|grep ddswrapper
 ```
 
-Podczas kopiowania podajemy odpowiednią ścieżkę występowania pliku.
+Podczas kopiowania podajemy odpowiednią ścieżkę do pliku.
 
+Opisany powyżej sposób z kopiowaniem bibliotek jest najprostszy, można zastosować też inne nie przedstawione w tym dokumencie.
+
+Po pobraniu środowiska z repozytorium należy je zaintalować, aby możliwe było jego użycie. W tym celu należy przejść w terminalu do folderu, gdzie umieszczono rozpakowane pliki ze środowiskiem (nazwę folderu podrzędnego ustawić na `gym-bridge-auction`, jeśli jest inna). Następnie dokonać instalacji w następujący sposób (posiadając wersję Python 3.5+):
+
+```
+python3 -m pip install gym-bridge-auction 
+```
+
+lub
+
+```
+python3 -m pip install -e .
+```
+
+
+
+## Praca
 
 Aby przetestować działanie środowiska w wersji konsolowej można użyć poniższego kodu. Do testów wykorzystujących interfejs graficzny należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów.
 
@@ -119,7 +72,9 @@ for i_episode in range(5):
 env.close()
 ```
 
-# Działanie środowiska z interfejsem graficznym
+## Działanie środowiska z interfejsem graficznym
+
+Działanie kodu z poprzedniego punktu przedstawiono na poniższym filmiku.
 
 [![Watch the video](https://i.imgur.com/UIgSQDV.jpg)](https://youtu.be/VSm32FQY6Bk)
 
