@@ -185,7 +185,7 @@ class AuctionEnv(gym.Env):
         self._score = [0, 0]  # zapis dla par w danym momencie licytacji
         # maksymalna odzywka według solvera dla gracza zgłaszającego najwyższy kontrakt w danym momencie licytacji
         self._max_contract = None
-        # liczba lew według solvera jaką może wziąć gracz zgłaszający najwyższy kontrakt w danym momencie licytacji
+        # maksymalna liczba lew według solvera, jaką może wziąć gracz zgłaszający najwyższy kontrakt w danym momencie licytacji
         self._max_number_of_tricks = None
         self._reward = [None, None]  # nagroda dla par
 
