@@ -13,7 +13,7 @@ Wersja Python 3.5+.
 
 Wymagana jest instalacja następujących bibliotek: `pygame` , `cppyy` , `gym` i `numpy`.
 
-Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` lub `/lib`w swoim systemie, aby zaintalować biblioteki konieczne do użycia Double Dummy Solver. Można to zrobić w następujący sposób:
+Należy również przekopiować następujące pliki: `libdds.so` i `libddswrapper.so` do folderu `/usr/lib` lub `/lib`w swoim systemie, aby zaintalować biblioteki konieczne do użycia Double Dummy Solver (Tego narzędzia nie trzeba pobierać z oficjalnej strony, bo w niniejszym repozytorium zamieszczono wszystkie niezbędne pliki, które otrzymano po kompilacji biblioteki). Można to zrobić w następujący sposób:
 
 ```
 sudo cp /home/patrycja/PycharmProjects/gym_bridge_auction/gym_bridge_auction/envs/solver/dds_wrapper/libddswrapper.so /usr/lib
