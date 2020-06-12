@@ -10,9 +10,9 @@ BONUS = {'SLAM': 500, 'GRAND_SLAM': 1000, 'PARTIAL-GAME': 50, 'GAME': 300, 'DOUB
 
 
 def get_results_from_solver(pbn, dealer):
-    """Funkcja wyznaczająca liczbę lew jaką weźmie każdy z graczy dla danego miana oraz zwracająca wartość punktową
-    dla pary N-S (dla E-W jest taka sama wartość, tylko z przeciwnym znakiem) za optymalny kontrakt, gdy wszystkie pary
-    licytują idealnie.
+    """Funkcja wyznaczająca liczbę lew, jaką weźmie każdy z graczy wraz z partnerem dla danego miana 
+    oraz zwracająca wartość punktową dla pary N-S (dla E-W jest taka sama wartość, tylko z przeciwnym znakiem) 
+    za optymalny kontrakt, gdy wszystkie pary licytują idealnie.
     Wykorzystano Double Dummy Solver napisany w C++.
     Wyznaczone liczby lew są w następującej kolejności:
     najpierw North i ilość lew dla poszczególnych mian kolejno: S, H, D, C, NT,
