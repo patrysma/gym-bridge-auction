@@ -19,7 +19,7 @@ def get_results_from_solver(pbn, dealer):
     a następnie East, South i West z identyczną kolejnością mian."""
 
     try:
-        cppyy.include("./solver/dds_wrapper/ddswrapper.h")
+        cppyy.include("./gym_bridge_auction/envs/solver/dds_wrapper/ddswrapper.h")
         cppyy.load_library("ddswrapper")
         solver_result = cppyy.gbl.calcNumberOfTricks(cppyy.gbl.std.string(pbn))
         optimum_score = cppyy.gbl.calcOptimumContracts(cppyy.gbl.std.string(pbn), dealer)
