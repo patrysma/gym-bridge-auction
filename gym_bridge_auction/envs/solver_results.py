@@ -1,6 +1,7 @@
 from gym_bridge_auction.envs.game import *
 # biblioteka umożliwiająca połączenie C++ i Python
 import cppyy
+import time
 
 # wartości punktowe z zapisu brydżowego do wyznaczenia funkcji nagrody
 CONTRACT_POINTS = {'C': 20, 'D': 20, 'H': 30, 'S': 30, 'NT': (40, 30), 'X': 2, 'XX': 4}
@@ -21,10 +22,15 @@ def get_results_from_solver(pbn, dealer):
     try:
         cppyy.include("./gym_bridge_auction/envs/solver/dds_wrapper/ddswrapper.h")
         cppyy.load_library("ddswrapper")
-        solver_result = cppyy.gbl.calcNumberOfTricks(cppyy.gbl.std.string(pbn))
-        optimum_score = cppyy.gbl.calcOptimumContracts(cppyy.gbl.std.string(pbn), dealer)
+        start1 = time.time()
+        solver_result = cppyy.gbl.calcTricksAndScore(cppyy.gbl.std.string(pbn), dealer)
+        stop1 = time.time()
+        print(stop1-start1)
+        solver_result = list(solver_result)
+        number_of_tricks = solver_result[0:len(solver_result)-1]
+        optimum_score = solver_result[len(solver_result)-1]
 
-        return list(solver_result), optimum_score
+        return number_of_tricks, optimum_score
     except:
         print('Solver error')
         quit()

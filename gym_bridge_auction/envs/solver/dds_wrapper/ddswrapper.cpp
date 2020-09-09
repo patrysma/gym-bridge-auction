@@ -18,38 +18,9 @@ std::vector <int> calcResults(ddTableResults * table)
     return result;
 }
 
-std::vector <int> calcNumberOfTricks(std::string pbnHands)
+std::vector <int> calcTricksAndScore(std::string pbnHands, int dealer)
 {
-    ddTableDealPBN tableDealPBN;
-    ddTableResults table;
-    int res;
-    char line[80];
-
-#if defined(__linux) || defined(__APPLE__) //ilość wątków
-  SetMaxThreads(0);
-#endif
-
-    char pbn[80];
-    strcpy(pbn, pbnHands.c_str()); //zamiana rąk w stringach na char
-
-    strcpy(tableDealPBN.cards, pbn); //wczytanie rąk do odpowiedniej zmiennej wykorzystywanej w funkcji poniżej
-
-    res = CalcDDtablePBN(tableDealPBN, &table); //wyliczenie ilości lew jaką wezmą gracze z partnerem dla danego miana
-
-    if (res != RETURN_NO_FAULT) //sprawdzenie błędów
-    {
-        ErrorMessage(res, line);
-        printf("DDS error: %s\n", line);
-    }
-
-    std::vector <int> result = calcResults(&table);
-
-    return result; //wektor wyników dla poszczególnych graczy
-}
-
-int calcOptimumContracts(std::string pbnHands, int dealer)
-{
-    int res;
+    int res1, res2;
     char line[80];
     ddTableResults table;
     parResultsDealer pres;
@@ -64,23 +35,27 @@ int calcOptimumContracts(std::string pbnHands, int dealer)
 
     strcpy(tableDealPBN.cards, pbn); //wczytanie rąk do odpowiedniej zmiennej wykorzystywanej w funkcji poniżej
 
-    res = CalcDDtablePBN(tableDealPBN, &table); //wyliczenie ilości lew jaką wezmą gracze z partnerem dla danego miana
+    res1 = CalcDDtablePBN(tableDealPBN, &table); //wyliczenie ilości lew jaką wezmą gracze z partnerem dla danego miana
 
-    if (res != RETURN_NO_FAULT) //sprawdzenie błędów
+    if (res1 != RETURN_NO_FAULT) //sprawdzenie błędów
     {
-        ErrorMessage(res, line);
+        ErrorMessage(res1, line);
         printf("DDS error: %s\n", line);
     }
 
-    res = DealerPar(&table, &pres, dealer, 0); //wyznaczenie optymalnego kontraktu dla danego rozdania
+    std::vector <int> result = calcResults(&table); //wektor z liczbami lew dla wszystkich graczy
 
-    if (res != RETURN_NO_FAULT)
+    res2 = DealerPar(&table, &pres, dealer, 0); //wyznaczenie optymalnego kontraktu dla danego rozdania
+
+    if (res2 != RETURN_NO_FAULT) //sprawdzenie błędów
     {
-        ErrorMessage(res, line);
+        ErrorMessage(res2, line);
         printf("DDS error: %s\n", line);
     }
 
-    return pres.score; //liczba punktów dla pary N-S za optymalny kontrakt
+    result.push_back(pres.score); //dodanie liczba punktów dla pary N-S za optymalny kontrakt do wektora wyników
+
+    return result; //wektor wyników
 }
 
 

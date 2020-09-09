@@ -1,0 +1,7 @@
+README.md
+setup.py
+gym_bridge_auction.egg-info/PKG-INFO
+gym_bridge_auction.egg-info/SOURCES.txt
+gym_bridge_auction.egg-info/dependency_links.txt
+gym_bridge_auction.egg-info/requires.txt
+gym_bridge_auction.egg-info/top_level.txt

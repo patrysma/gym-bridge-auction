@@ -1,7 +1,7 @@
 import gym_bridge_auction
 import gym
 
-"""Przykład użycia środowiska dla losowych działań agentów i interfejsu graficznego (opcja 'human')"""
+"""Przykład użycia środowiska dla losowych działań agentów i interfejsu graficznego (opcja 'console')"""
 
 env = gym.make('BridgeAuction-v0')
 
