@@ -3,10 +3,17 @@ import gym
 
 """Przykład użycia środowiska dla losowych działań agentów i interfejsu graficznego (opcja 'console')"""
 
+PLAYERS_NAMES = ['N', 'E', 'S', 'W']
+
 env = gym.make('BridgeAuction-v0')
 
 for i_episode in range(5):
     observation = env.reset()
+    hands = {}
+
+    for number, player in enumerate(PLAYERS_NAMES):
+        hands[player] = observation['Players hand'][number]
+
     env.render('console')
     print('Observation space:')
     print(observation)
