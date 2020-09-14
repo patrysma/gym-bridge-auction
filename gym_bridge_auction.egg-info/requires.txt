@@ -1,4 +1,0 @@
-gym
-pygame
-cppyy
-numpy
