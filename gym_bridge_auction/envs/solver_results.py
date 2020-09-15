@@ -27,8 +27,8 @@ def get_results_from_solver(pbn, dealer):
         stop1 = time.time()
         print(stop1-start1)
         solver_result = list(solver_result)
-        number_of_tricks = solver_result[0:len(solver_result)-1]
-        optimum_score = solver_result[len(solver_result)-1]
+        number_of_tricks = solver_result[0:-1]
+        optimum_score = solver_result[-1]
 
         return number_of_tricks, optimum_score
     except:

@@ -131,7 +131,7 @@ class AuctionEnv(gym.Env):
             
         Stan początkowy środowiska:
             Po zresetowaniu środowiska do stanu początkowego ustalone zostają następujące stany przestrzeni obserwacji:
-            - 'Players hand' - reprezentacja rąk graczy w formie 0/1 jest dostępna tylko po użyciu funkcji reset(),
+            - 'Players hands' - reprezentacja rąk graczy w formie 0/1 jest dostępna tylko po użyciu funkcji reset(),
             podczas kolejnych kroków epizodu przestaje być dostępna (należy ją od razu przypisać do innej zmiennej)
             - 'pair score/optimum score' - tylko optymalne wartości puntowe dla par, zapis pozostaje nieustalony
             - 'whose next turn' - indeks rozdającego, który rozpoczyna licytację
@@ -148,7 +148,7 @@ class AuctionEnv(gym.Env):
             - zbyt mała liczba iteracji (kroków) w danym epizodzie nie pozwalająca na zakończenie licytacji 
             według powyższych trzech powodów."""
 
-    metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 1}
+    metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 0.5}
 
     def __init__(self):
 
@@ -197,12 +197,11 @@ class AuctionEnv(gym.Env):
                                               'Player_contract': spaces.Discrete(38),
                                               'winning_pair': spaces.Discrete(self._n_players / 2),
                                               'double/redouble': spaces.Discrete(3),
-                                              'Players hand': spaces.Tuple(
+                                              'Players hands': spaces.Tuple(
                                                   [spaces.MultiDiscrete([2 for _ in range(0, len(self._deck.deck))])
-                                                   for _ in range(0, self._n_players)]),
-                                              'pair score/optimum score': spaces.Box(low=-7000, high=7000, shape=(4,),
-                                                                                     dtype=np.int32)})
+                                                   for _ in range(0, self._n_players)])})
         self.action_space = Dynamic(38)  # przestrzeń dostępnych działań agenta
+        self._info = {}  # dodatkowe informacje na temat środowiska nie dostępne dla agenta
 
         self.reset()
 
@@ -226,7 +225,7 @@ class AuctionEnv(gym.Env):
                 
                     Wartość True oznacza koniec epizodu.
             
-                info (dict) - informacje diagnotyczne użyteczne przy debbugowaniu"""
+                info (dict) - dodatkowe informacje dotyczące środowiska, które są nie dostępne dla agaentów"""
 
         # sprawdzenie czy wykonane działanie przez agenta jest możliwe
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
@@ -234,9 +233,11 @@ class AuctionEnv(gym.Env):
         # wyznaczenie przestrzeni obserwacji i nagrody
         state = self._get_game_state(action, False)
         self._reward = self._get_reward(state, action)
-        # dodanie do przestrzeni obserwacji zapisu oraz optymalnych punktów dla każdej z par
-        state['pair score/optimum score'] = np.array([self._score[0], self._score[1], self._optimum_contract_score[0],
-                                                      self._optimum_contract_score[1]])
+
+        # dodanie do dodatkowych informacji, nie dostępnych dla agentów, zapisu oraz optymalnych punktów dla każdej z par
+        self._info['pair score'] = np.array([self._score[0], self._score[1]])
+        self._info['optimum score'] = np.array([self._optimum_contract_score[0], self._optimum_contract_score[1]])
+
         self._index_order += 1
         if self._index_order == 4:
             self._index_order = 0
@@ -250,7 +251,8 @@ class AuctionEnv(gym.Env):
         return state, self._reward, done, {}
 
     def reset(self):
-        """Reset środowiska i przywrócenie początkowego stanu licytacji oraz początkowej przestrzeni akcji (wszystkie odzywki + pas)"""
+        """Reset środowiska i przywrócenie początkowego stanu licytacji oraz początkowej przestrzeni akcji (wszystkie
+        odzywki + pas)"""
 
         self._viewer = None
         self._index_order = 0
@@ -298,11 +300,12 @@ class AuctionEnv(gym.Env):
                                       self._optimum_contract_score,
                                       self.metadata['video.frames_per_second'])
 
-            time.sleep(2)
+            #time.sleep(2)
 
         elif mode == 'console':
             # wersja konsolowa
             if self._viewer is None:
+                print(' ')
                 print('Dealer: ' + self._dealer_name)
 
                 for i in range(0, self._n_players):
@@ -435,14 +438,14 @@ class AuctionEnv(gym.Env):
             state['winning_pair'] = None
             state['double/redouble'] = 0
             self._last_contract = None
-            state['Players hand'] = [[] for _ in range(0, self._n_players)]
-            state['pair score/optimum score'] = np.array([self._score[0], self._score[1],
-                                                          self._optimum_contract_score[0],
-                                                          self._optimum_contract_score[1]])
+            state['Players hands'] = [[] for _ in range(0, self._n_players)]
 
             # reprezentacja rąk graczy w formie 0/1 jest dostępna tylko zaraz po zresetowaniu stanu środowiska
             for player in enumerate(self._players):
-                state['Players hand'][player[0]] = player[1].hand_representation
+                state['Players hands'][player[0]] = player[1].hand_representation
+
+            self._info['pair score'] = np.array([self._score[0], self._score[1]])
+            self._info['optimum score'] = np.array([self._optimum_contract_score[0], self._optimum_contract_score[1]])
 
         else:
             # przestrzeń obserwacji po wykonaniu akcji przez agenta
