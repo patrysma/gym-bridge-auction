@@ -28,8 +28,7 @@ class Contract:
     suit - miano odzywki - symbole kolorów, czyli (od najmłodszego): C-Club (trefl), D-Diamond (karo), H-Heart (kier),
     S-Spade (pik), NT-no trump (bez atu) plus doadatkowo zapowiedź "pass", "double", "redouble";
     number - parametr określający liczbę danej odzywki (numery od 1 do 7), dla pasu nie przypisuje się żadnej liczby;
-    value - parametr określający wyższość danego kontraktu (wartości od 1 do 35), w przypadku pasu przypisano mu
-    wartość zero."""
+    value - parametr określający identyfikator zapowiedzi."""
 
     def __init__(self, suit, number):
         """Przypisanie symbolu koloru i numeru kontraktu."""
@@ -39,7 +38,7 @@ class Contract:
         self.value = None
 
     def set_value(self, value):
-        """Przypisanie wartości, która określa wyższość danej odzywki podczas licytacji"""
+        """Przypisanie identyfikatora do danej zapowiedzi"""
 
         self.value = value
 
