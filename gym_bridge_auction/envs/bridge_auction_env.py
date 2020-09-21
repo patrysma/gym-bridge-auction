@@ -248,7 +248,7 @@ class AuctionEnv(gym.Env):
         # wyznaczenie dostępnych działań dla następnego gracza z przestrzeni akcji
         self.action_space.set_available_actions(action, state)
 
-        return state, self._reward, done, {}
+        return state, self._reward, done, self._info
 
     def reset(self):
         """Reset środowiska i przywrócenie początkowego stanu licytacji oraz początkowej przestrzeni akcji (wszystkie
