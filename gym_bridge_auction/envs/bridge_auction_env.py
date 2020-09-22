@@ -234,7 +234,7 @@ class AuctionEnv(gym.Env):
         state = self._get_game_state(action, False)
         self._reward = self._get_reward(state, action)
 
-        # dodanie do dodatkowych informacji, nie dostępnych dla agentów, zapisu oraz optymalnych punktów dla każdej z par
+        # dodanie do dodatkowych informacji, przydatnych do sprawdzania wyników, dotyczących zapisu oraz optymalnych punktów dla każdej z par
         self._info['pair score'] = np.array([self._score[0], self._score[1]])
         self._info['optimum score'] = np.array([self._optimum_contract_score[0], self._optimum_contract_score[1]])
 
