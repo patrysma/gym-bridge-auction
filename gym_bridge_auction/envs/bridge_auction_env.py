@@ -300,8 +300,6 @@ class AuctionEnv(gym.Env):
                                       self._optimum_contract_score,
                                       self.metadata['video.frames_per_second'])
 
-            #time.sleep(2)
-
         elif mode == 'console':
             # wersja konsolowa
             if self._viewer is None:
