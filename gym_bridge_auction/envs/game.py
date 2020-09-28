@@ -159,7 +159,7 @@ class Player:
         self.win_auction = False  # określenie czy dany gracz wygrał licytację
         self.player_contracts = None  # odzywka/zapowiedź gracza w danym momencie licytacji
         self.makeable_contracts = {}  # maksymalne realizowane kontrakty wyznaczone za pomocą Double Dummy Solver
-        self.number_of_trick = {}  # maksymalna liczba wziętych lew wyznaczona za pomocą Double Dummy Solver
+        self.number_of_tricks = {}  # maksymalna liczba wziętych lew wyznaczona za pomocą Double Dummy Solver
         self.hand_representation = self.set_hand_representation()  # reprezentacja ręki gracza w formie 0/1
 
     def split_hand(self):
@@ -193,7 +193,7 @@ class Player:
 
         hand_representation = [0 for _ in range(0, 52)]
 
-        for hand in self.hand:
-            hand_representation[hand.position] = 1
+        for card in self.hand:
+            hand_representation[card.position] = 1
 
         return hand_representation

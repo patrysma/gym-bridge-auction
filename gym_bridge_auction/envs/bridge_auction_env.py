@@ -101,17 +101,7 @@ class AuctionEnv(gym.Env):
                 0 (nie posiada karty), 1 (posiada kartę).
                 
                 Karty ustawione są od 2 do A kolejno kolorami trefl, karo, kier i na końcu pik:
-                [2♣, ..., A♣, 2♦, ..., A♦, 2♥, ..., A♥, 2♠, ..., A♠]
-
-            Stan 'pair score/optimum score' - oznacza zapis brydżowy w danym momencie licytacji oraz optymalną wartość punktów 
-            według Double Dummy Solver dla każdej z par:
-                Typ: Box(4,), typ danych: int
-                
-                | Liczba | Obserwacja | Min | Max |
-                | 0 | Zapis pary N-S | -7000 | 7000 |
-                | 1 | Zapis pary E-W | -7000 | 7000 |
-                | 2 | Optymalne punkty pary N-S | -7000 | 7000 |
-                | 3 | Optymalne punkty pary E-W | -7000 | 7000 |
+                [2♣, ..., A♣, 2♦, ..., A♦, 2♥, ..., A♥, 2♠, ..., A♠].
                         
         Nagroda:
             W każdym kroku wyznaczona jest nagroda wartościująca działania agentów.
@@ -144,9 +134,7 @@ class AuctionEnv(gym.Env):
             Licytacja, czyli jeden epizod kończy się w następujących przypadkach:
             - wystąpienie kolejno trzech pasów po ustalonym kontrakcie,
             - nie ustalono kontraktu - na początku licytacji wszyscy gracze spasowali,
-            - ostateczny kontrakt to 7NT, a po tym nastąpiła kontra i rekontra,
-            - zbyt mała liczba iteracji (kroków) w danym epizodzie nie pozwalająca na zakończenie licytacji 
-            według powyższych trzech powodów."""
+            - ostateczny kontrakt to 7NT, a po tym nastąpiła kontra i rekontra."""
 
     metadata = {'render.modes': ['human', 'console'], 'video.frames_per_second': 0.5}
 
@@ -189,7 +177,7 @@ class AuctionEnv(gym.Env):
         self._max_number_of_tricks = None
         self._reward = [None, None]  # nagroda dla par
 
-        self.reward_range = (-9280, 9280)  # zakres wartości nagrody
+        self.reward_range = (-8790, 8790)  # zakres wartości nagrody
         # przestrzeń obserwacji
         self.observation_space = spaces.Dict({'whose turn': spaces.Discrete(self._n_players),
                                               'whose next turn': spaces.Discrete(self._n_players),
@@ -225,7 +213,7 @@ class AuctionEnv(gym.Env):
                 
                     Wartość True oznacza koniec epizodu.
             
-                info (dict) - dodatkowe informacje dotyczące środowiska, które są nie dostępne dla agaentów"""
+                info (dict) - dodatkowe informacje dotyczące środowiska."""
 
         # sprawdzenie czy wykonane działanie przez agenta jest możliwe
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
@@ -234,7 +222,8 @@ class AuctionEnv(gym.Env):
         state = self._get_game_state(action, False)
         self._reward = self._get_reward(state, action)
 
-        # dodanie do dodatkowych informacji, przydatnych do sprawdzania wyników, dotyczących zapisu oraz optymalnych punktów dla każdej z par
+        # dodanie do dodatkowych informacji, przydatnych do sprawdzania wyników, dotyczących zapisu oraz optymalnych
+        # punktów dla każdej z par
         self._info['pair score'] = np.array([self._score[0], self._score[1]])
         self._info['optimum score'] = np.array([self._optimum_contract_score[0], self._optimum_contract_score[1]])
 
@@ -307,7 +296,6 @@ class AuctionEnv(gym.Env):
                 print('Dealer: ' + self._dealer_name)
 
                 for i in range(0, self._n_players):
-                    print(' ')
                     print(self._players[i].name + ' hand:')
                     print(spade + ' ' + self._players[i].hand_splitted[0])
                     print(heart + ' ' + self._players[i].hand_splitted[1])

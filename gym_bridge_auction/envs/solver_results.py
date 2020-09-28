@@ -22,10 +22,7 @@ def get_results_from_solver(pbn, dealer):
     try:
         cppyy.include("./gym_bridge_auction/envs/solver/dds_wrapper/ddswrapper.h")
         cppyy.load_library("ddswrapper")
-        start1 = time.time()
         solver_result = cppyy.gbl.calcTricksAndScore(cppyy.gbl.std.string(pbn), dealer)
-        stop1 = time.time()
-        print(stop1-start1)
         solver_result = list(solver_result)
         number_of_tricks = solver_result[0:-1]
         optimum_score = solver_result[-1]

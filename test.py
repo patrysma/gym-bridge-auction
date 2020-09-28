@@ -14,14 +14,14 @@ for i_episode in range(5):
     for number, player in enumerate(PLAYERS_NAMES):
         hands[player] = observation['Players hands'][number]
 
-    env.render('human')
+    env.render('console')
     print('Observation space:')
     print(observation)
 
     for i in range(100):
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
-        env.render('human')
+        env.render('console')
         print('Observation space:')
         print(observation)
         print('Reward: ' + str(reward))
