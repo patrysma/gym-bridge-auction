@@ -12,13 +12,13 @@ from gym_bridge_auction.envs.render import Window
 class AuctionEnv(gym.Env):
     """Środowisko wieloagentowe (czterech graczy) symulujące licytację brydżową. 
     Jest to przykład środowiska, gdzie poszczególni agenci nie dysponują pełnym zestawem informacji na temat stanu gry.
-    Mają dostęp tylko do historii licytacji oraz własnych kart, ręce przeciwników nie są znane.
+    Mają dostęp tylko do historii licytacji oraz własnych kart, a ręce przeciwników nie są znane.
     
-    Agenci w ustalonej kolejności zegarowej (rozpoczyna rozdający) wykonują pojedyńcze akcje (licytują) wybierane z dostępnej 
-    przestrzeni. Działania graczy są wartościowane za pomocą nagrody oceniającej skuteczność licytacji. W każdym kroku zwracana 
-    jest różnica od przypadku idealnego. Definiując funkcję nagrody wspomagano się dostępnymi narzędziami, czyli Double
-    Dummy Solver. Cel każdego z epizodów to ustalenie kontraktu, który stanowi zobowiązanie do wzięcia określonej liczby lew 
-    przez parę wygrywającą licytację.
+    Agenci w ustalonej kolejności zegarowej (rozpoczyna rozdający) wykonują pojedyńcze akcje (licytują) wybierane z 
+    dostępnej przestrzeni. Działania graczy są wartościowane za pomocą nagrody oceniającej skuteczność licytacji. 
+    W każdym kroku zwracana jest różnica od przypadku idealnego. Definiując funkcję nagrody wspomagano się dostępnymi 
+    narzędziami, czyli Double Dummy Solver. Cel każdego z epizodów to ustalenie kontraktu, który stanowi zobowiązanie 
+    do wzięcia określonej liczby lew przez parę wygrywającą licytację.
     
     Przestrzeń akcji:
         Typ: Dynamic(38) - przestrzeń dziedzicząca po Discrete
@@ -40,16 +40,17 @@ class AuctionEnv(gym.Env):
         | 36 | double |
         | 37 | redouble |
         
-        Typ Dynamic to specjalnie zdefiniowana klasa, dziedzicząca po Discrete, zapewnająca zmieniającą się przestrzeń akcji
-        w kolejnych krokach licytacji. Zawiera ona w danym momencie tylko takie odzywki lub zapowiedzi (kontra, rekontra, pas),
-        które może zgłosić gracz podczas licytacji, według zasad brydża. W każdym etapie na przestrzeń akcji składają się: odzywki
-        wyższe w hierarchi od ostatniej zgłoszonej, zapowiedź pas oraz kontra (dostępna dla przeciwników pary, która zgłosiła ostatnią 
-        odzywkę) i rekontra (dostępna dla pary z najwyższą obecnie zgłoszoną odzywką po kontrze przeciwników). Na początku licytacji
-        dostępne są wszystkie odzywki i zapowiedź pas.
+        Typ Dynamic to specjalnie zdefiniowana klasa, dziedzicząca po Discrete, zapewniająca zmieniającą się przestrzeń 
+        akcji w kolejnych krokach licytacji. Zawiera ona w danym momencie tylko takie odzywki lub zapowiedzi 
+        (kontra, rekontra, pas), które może zgłosić gracz podczas licytacji, według zasad brydża. W każdym etapie na 
+        przestrzeń akcji składają się: odzywki wyższe w hierarchi od ostatniej zgłoszonej, zapowiedź pas oraz kontra 
+        (dostępna dla przeciwników pary, która zgłosiła ostatnią odzywkę) i rekontra (dostępna dla pary z najwyższą 
+        obecnie zgłoszoną odzywką po kontrze przeciwników). Na początku licytacji dostępne są wszystkie odzywki 
+        i zapowiedź pas.
         
         Przestrzeń obserwacji:
-            Typ: Dict - zawierający stany: 'whose turn', 'whose next turn', 'LAST_contract', 'Player_contract', 'winning_pair',
-            'double/redouble', 'Players hand', 'pair score/optimum score'.
+            Typ: Dict - zawierający stany: 'whose turn', 'whose next turn', 'LAST_contract', 'Player_contract', 
+            'winning_pair', 'double/redouble', 'Players hand'.
             
             Stan 'whose turn' - oznacza który z graczy licytował w danym kroku:
                 Typ: Discrete(4)
@@ -177,7 +178,7 @@ class AuctionEnv(gym.Env):
         self._max_number_of_tricks = None
         self._reward = [None, None]  # nagroda dla par
 
-        self.reward_range = (-8790, 8790)  # zakres wartości nagrody
+        self.reward_range = (-8520, 8520)  # zakres wartości nagrody
         # przestrzeń obserwacji
         self.observation_space = spaces.Dict({'whose turn': spaces.Discrete(self._n_players),
                                               'whose next turn': spaces.Discrete(self._n_players),
@@ -253,6 +254,7 @@ class AuctionEnv(gym.Env):
         self._max_number_of_tricks = None
         self._max_contract = None
         self._reward = [None, None]
+        self._info = {}
         self.action_space.reset()
 
         return self._get_game_state(None, True)
@@ -429,9 +431,6 @@ class AuctionEnv(gym.Env):
             # reprezentacja rąk graczy w formie 0/1 jest dostępna tylko zaraz po zresetowaniu stanu środowiska
             for player in enumerate(self._players):
                 state['Players hands'][player[0]] = player[1].hand_representation
-
-            self._info['pair score'] = np.array([self._score[0], self._score[1]])
-            self._info['optimum score'] = np.array([self._optimum_contract_score[0], self._optimum_contract_score[1]])
 
         else:
             # przestrzeń obserwacji po wykonaniu akcji przez agenta

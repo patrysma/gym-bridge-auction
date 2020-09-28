@@ -6,7 +6,7 @@ heart = "\u2665"
 diamond = "\u2666"
 club = "\u2663"
 
-# Nazwy poszczególych graczy, w kolejności zegarowej od północy (N - North, E - East, S - South, W -West)
+# Nazwy poszczególnych graczy, w kolejności zegarowej od północy (N - North, E - East, S - South, W -West)
 NAMES = ['N', 'E', 'S', 'W']
 
 # Miana odzywki
@@ -27,7 +27,8 @@ class Contract:
     gdzie:
     suit - miano odzywki - symbole kolorów, czyli (od najmłodszego): C-Club (trefl), D-Diamond (karo), H-Heart (kier),
     S-Spade (pik), NT-no trump (bez atu) plus doadatkowo zapowiedź "pass", "double", "redouble";
-    number - parametr określający liczbę danej odzywki (numery od 1 do 7), dla pasu nie przypisuje się żadnej liczby;
+    number - parametr określający liczbę danej odzywki (numery od 1 do 7), dla pasa, kontry, rekontry nie przypisuje się
+    żadnej liczby;
     value - parametr określający identyfikator zapowiedzi."""
 
     def __init__(self, suit, number):
@@ -75,11 +76,12 @@ class Card:
         rank - numer bądź figura danej karty - jedno z dostępnych - {A, K, Q, J, 10, 9, 8, 7, 6, 5, 4, 3, 2} -
         kolejno od najstarszego;
         value - liczba definiująca pozycję karty w hierarchii w danym kolorze (liczby od 2 do 14)
-        position - pozycja karty w reprezentacji 0/1"""
+        position - pozycja karty w talii wykorzystywana w reprezentacji 0/1 - karty ustawione są od 2 do A kolejno
+        kolorami trefl, karo, kier i na końcu pik"""
 
     def __init__(self, suit, rank):
         """Przypisanie koloru, numeru/figury i wartości określającej pozycję karty w hierarchii w danym kolorze oraz
-        w reprezentacji 0/1"""
+        w talii"""
 
         self.suit = suit
         self.rank = rank
@@ -122,7 +124,7 @@ class Deck:
     """Definicja talii 52 kart do gry w brydża"""
 
     def __init__(self):
-        """Lista wszystkich kart do gry - 52 obiektów typu Card"""
+        """Lista wszystkich kart do gry - 52 obiekty typu Card"""
 
         rank = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']  # numery/figury karty
         suites = [spade, heart, diamond, club]  # kolory karty

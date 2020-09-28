@@ -4,7 +4,7 @@ from gym_bridge_auction.envs.game import WIN_PAIR
 
 
 class Dynamic(spaces.Discrete):
-    """Zmieniającą się przestrzeń akcji po wykonaniu kolejnych kroków"""
+    """Zmieniająca się przestrzeń akcji po wykonaniu kolejnych kroków"""
 
     def __init__(self, max_space):
         super().__init__(max_space)
@@ -25,7 +25,7 @@ class Dynamic(spaces.Discrete):
         """Zdefiniowanie dostępnych działań dla agenta w danym kroku"""
 
         if not (action in (0, 36, 37)):
-            # zmniejaszanie się dostępnych odzywek licytacyjnych
+            # zmniejszanie się dostępnych odzywek licytacyjnych
             self.new_n = action
 
         self.available_actions = list(range(0, self.new_n))

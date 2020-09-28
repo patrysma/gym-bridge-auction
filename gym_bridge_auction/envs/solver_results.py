@@ -34,7 +34,7 @@ def get_results_from_solver(pbn, dealer):
 
 
 def get_solver_result_for_player(player_index, solver_result):
-    """Ilość lew dla danego miana z solvera jaką weźmie ustalony gracz"""
+    """Ilość lew dla danego miana z solvera, jaką weźmie ustalony gracz"""
 
     player_solver_result = {}
 

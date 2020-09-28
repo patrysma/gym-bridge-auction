@@ -8,7 +8,7 @@ class Window:
     def __init__(self, north_hands_display=None, east_hands_display=None, south_hands_display=None,
                  west_hands_display=None, who_is_dealer=None):
         """Utworzenie niezmiennych elementów interfejsu graficznego,
-        gdzie podane parametry to: ręce poszczególnych graczy oraz nazwę gracza, który jest rozdającym"""
+        gdzie podane parametry to: ręce poszczególnych graczy oraz nazwa gracza, który jest rozdającym"""
 
         pygame.init()
         # defincja wymiarów okna i tytułu
@@ -115,7 +115,7 @@ class Window:
         return text_label
 
     def create_list_of_labels(self, text, x_pos, y_pos):
-        """Utworzenie listy etykiet i ustawiająca ich poszczególne pozycje
+        """Utworzenie listy etykiet i ustawienie ich pozycji
         gdzie:
         text - zmienna typu teksowego
         x_pos, y_pos - pozycje etykiety na ekranie"""
@@ -154,7 +154,7 @@ class Window:
                 return
 
     def close_window(self):
-        """Zamyknięcie okna i zakończenie pracy programu"""
+        """Zamknięcie okna i zakończenie pracy programu"""
 
         pygame.quit()
         quit()
