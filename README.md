@@ -2,10 +2,23 @@
 
 Środowisko wieloagentowe (czterech graczy) symulujące licytację brydżową wykorzystujące interfejs biblioteki Gym. Jest to przykład środowiska, gdzie poszczególni agenci nie posiadają pełnego zestawu informacji na temat stanu gry. Mają dostęp tylko do historii licytacji oraz własnych kart, ręce przeciwników nie są znane.
     
-Gracze w ustalonej kolejności zegarowej (rozpoczyna rozdający) wykonują pojedyńcze akcje wybierane z dostępnej 
+Gracze w ustalonej kolejności zegarowej (rozpoczyna rozdający) wykonują pojedyncze akcje wybierane z dostępnej 
 przestrzeni (licytują). Działania agentów są wartościowane za pomocą nagrody oceniającej skuteczność licytacji. W każdym kroku zwracana jest różnica od przypadku idealnego. Definiując funkcję nagrody wspomagano się dostępnymi narzędziami, tj. Double Dummy Solver Bo Haglunda. Cel każdego z epizodów to ustalenie kontraktu, który stanowi zobowiązanie do wzięcia określonej liczby lew przez parę wygrywającą licytację.
 
 ## Wymagania wstępne
+
+W pierwszej kolejności należy pobrać środowisko z tego repozytorium. Projekt można pobrać jako archiwum ZIP lub korzystając z opcji `clone`, ale wymagane jest wtedy posiadanie Gita:
+
+```
+git clone https://github.com/patrysma/gym-bridge-auction.git
+```
+
+Następnie należy spełnić poniższe warunki, aby środowisko mogło działać poprawnie.
+
+- Rekomendowanym systemem operacyjnym jest Linux ze względu na to, że implementację i testy przeprowadzono na jego dystrybucji Ubuntu. Do testowania wykorzystano również serwer CentOS 7. Dodatkowo systemami wspieranymi przez OpenAI Gym są Linux i OS X. Systemu Windows można używać na własne ryzyko, jednak nie zagwarantowano poprawności działania wszystkich dostępnych opcji.
+
+- Posiadanie zainstalowanego Pythona 3.5+.
+
 
 System operacyjny Linux (testy i implementacja na Ubuntu). 
 
@@ -41,9 +54,9 @@ python3 -m pip install -e .
 
 Korzystając z  drugiego sposobu oprócz środowiska zainstalują się niezbędne biblioteki  `pygame` , `cppyy` , `gym` i `numpy`.
 
-## Przykład użycia środowiska
+## Przykładowy kod prezentujący działanie środowiska
 
-Aby przetestować działanie środowiska z interfejsem graficznym można użyć poniższego kodu. Do testów wykorzystujących wersję konsolową należy przy renderowaniu podać opcję `'console'`, czyli: `env.render('console')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów.
+Aby przetestować działanie środowiska z interfejsem konsolowym można użyć poniższego kodu. Do testów wykorzystujących wersję graficzną należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów bez implementacji żadnego systemu uczącego.
 
 ```python
 import gym
@@ -72,7 +85,7 @@ for i_episode in range(5):
 env.close()
 ```
 
-## Działanie środowiska z interfejsem graficznym
+## Działanie środowiska
 
 Poniższy filmik ukazuje działanie kodu z poprzedniego punktu.
 
