@@ -26,25 +26,25 @@ python3 -m pip install gym
 ```
 
 - Konieczna jest również instalacja biblioteki Double Dummy Solver oraz przygotowanego do niej wrappera - pliki `libdds.so` i `libddswrapper.so`. Można to zrobić na podstawie instrukcji opisanej poniżej. Narzędzia Double Dummy Solver nie trzeba pobierać z oficjalnej strony, bo w repozytorium projektu zamieszczono wszystkie niezbędne pliki, które otrzymano po kompilacji biblioteki (ścieżka `/gym_bridge_auction/envs/solver/dds` w repozytorium).
-    -Najprostszym sposobem instalacji jest przekopiowanie `libdds.so` i `libddswrapper.so` do domyślnej lokalizacji, gdzie szukane są pliki bibliotek. Dla systemu Linux domyślne katalogi to `/usr/lib` lub `/lib`. Poniżej przedstawiono sposób instalacji biblioteki poprzez kopiowanie pliku `libdds.so` do folderu `/usr/lib`. Do realizacji wymagane są uprawnienia administratora. Podczas kopiowania podajemy odpowiednią ścieżkę do pliku.
+  - Najprostszym sposobem instalacji jest przekopiowanie `libdds.so` i `libddswrapper.so` do domyślnej lokalizacji, gdzie szukane są pliki bibliotek. Dla systemu Linux domyślne katalogi to `/usr/lib` lub `/lib`. Poniżej przedstawiono sposób instalacji biblioteki poprzez kopiowanie pliku `libdds.so` do folderu `/usr/lib`. Do realizacji wymagane są uprawnienia administratora. Podczas kopiowania podajemy odpowiednią ścieżkę do pliku.
 
 ```
 sudo cp /home/patrycja/PycharmProjects/gym_bridge_auction/gym_bridge_auction/envs/solver/dds/src/libdds.so /usr/lib
 ```
 
- -Następnie należy uruchomić narzędzie `ldconfig`, które zaktualizuje pamięć podręczną bibliotek dostępnych w standardowych katalogach systemowych.
+  - Następnie należy uruchomić narzędzie `ldconfig`, które zaktualizuje pamięć podręczną bibliotek dostępnych w standardowych katalogach systemowych.
 
 ```
 sudo ldconfig
 ```
 
-    - Teraz można sprawdzić, czy pamięć podręczna została zaktualizowana za pomocą następującej komendy. 
+  - Teraz można sprawdzić, czy pamięć podręczna została zaktualizowana za pomocą następującej komendy. 
 
 ```
 ldconfig -p|grep dds
 ```
 
-    Przedstawiony sposób instalacji biblioteki przez kopiowanie do standardowego katalogu jest najprostszy, ale istnieją też inne. Dodatkowo da się również definiować własne ścieżki poszukiwań plików bibliotek, zapisując je do pliku `/etc/ld.so.conf`.
+   Przedstawiony sposób instalacji biblioteki przez kopiowanie do standardowego katalogu jest najprostszy, ale istnieją też inne. Dodatkowo da się również definiować własne ścieżki poszukiwań plików bibliotek, zapisując je do pliku `/etc/ld.so.conf`.
 
 - Po pobraniu środowiska z repozytorium trzeba je zainstalować, aby możliwe było jego użycie. W tym celu należy przejść w terminalu do folderu `gym-bridge-auction`, gdzie umieszczono wszystkie pliki ze środowiskiem oraz służący do instalacji `setup.py` (nazwę folderu głównego ustawić na `gym-bridge-auction`, jeśli jest inna). Następnie dokonać instalacji w następujący sposób:
 
@@ -58,7 +58,7 @@ lub
 python3 -m pip install -e .
 ```
 
-    Korzystając z drugiego sposobu oprócz środowiska zainstalują się niezbędne biblioteki  `pygame` , `cppyy` , `gym` i `numpy`.
+  Korzystając z drugiego sposobu oprócz środowiska zainstalują się niezbędne biblioteki  `pygame` , `cppyy` , `gym` i `numpy`.
 
 ## Przykładowy kod prezentujący działanie środowiska
 
