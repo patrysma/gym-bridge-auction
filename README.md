@@ -26,19 +26,19 @@ python3 -m pip install gym
 ```
 
 - Konieczna jest również instalacja biblioteki Double Dummy Solver oraz przygotowanego do niej wrappera - pliki `libdds.so` i `libddswrapper.so`. Można to zrobić na podstawie instrukcji opisanej poniżej. Narzędzia Double Dummy Solver nie trzeba pobierać z oficjalnej strony, bo w repozytorium projektu zamieszczono wszystkie niezbędne pliki, które otrzymano po kompilacji biblioteki (ścieżka `/gym_bridge_auction/envs/solver/dds` w repozytorium).
-  1. Najprostszym sposobem instalacji jest przekopiowanie `libdds.so` i `libddswrapper.so` do domyślnej lokalizacji, gdzie szukane są pliki bibliotek. Dla systemu Linux domyślne katalogi to `/usr/lib` lub `/lib`. Poniżej przedstawiono sposób instalacji biblioteki poprzez kopiowanie pliku `libdds.so` do folderu `/usr/lib`. Do realizacji wymagane są uprawnienia administratora. Podczas kopiowania podajemy odpowiednią ścieżkę do pliku.
+1. Najprostszym sposobem instalacji jest przekopiowanie `libdds.so` i `libddswrapper.so` do domyślnej lokalizacji, gdzie szukane są pliki bibliotek. Dla systemu Linux domyślne katalogi to `/usr/lib` lub `/lib`. Poniżej przedstawiono sposób instalacji biblioteki poprzez kopiowanie pliku `libdds.so` do folderu `/usr/lib`. Do realizacji wymagane są uprawnienia administratora. Podczas kopiowania podajemy odpowiednią ścieżkę do pliku.
 
 ```
 sudo cp /home/patrycja/PycharmProjects/gym_bridge_auction/gym_bridge_auction/envs/solver/dds/src/libdds.so /usr/lib
 ```
 
-   2. Następnie należy uruchomić narzędzie `ldconfig`, które zaktualizuje pamięć podręczną bibliotek dostępnych w standardowych katalogach systemowych.
+2. Następnie należy uruchomić narzędzie `ldconfig`, które zaktualizuje pamięć podręczną bibliotek dostępnych w standardowych katalogach systemowych.
 
 ```
 sudo ldconfig
 ```
 
-   3. Teraz można sprawdzić, czy pamięć podręczna została zaktualizowana za pomocą następującej komendy. 
+3. Teraz można sprawdzić, czy pamięć podręczna została zaktualizowana za pomocą następującej komendy. 
 
 ```
 ldconfig -p|grep dds
@@ -92,6 +92,125 @@ env.close()
 ```
 
 ## Działanie środowiska
+
+```
+Dealer: W 
+N hand:
+$\spadesuit$ 9 7
+$\varheartsuit$ Q 9 6 3
+$\vardiamondsuit$ 10 9 3
+$\clubsuit$ A 8 7 5
+E hand:
+$\spadesuit$ K Q 8 4 3
+$\varheartsuit$ K J 10
+$\vardiamondsuit$ J 6
+$\clubsuit$ Q 6 4
+S hand:
+$\spadesuit$ J
+$\varheartsuit$ A 8 7 2
+$\vardiamondsuit$ A 5 2
+$\clubsuit$ K 10 9 3 2
+W hand:
+$\spadesuit$ A 10 6 5 2
+$\varheartsuit$ 5 4
+$\vardiamondsuit$ K Q 8 7 4
+$\clubsuit$ J
+
+Observation space:
+{'whose turn': None, 'whose next turn': 3, 'LAST_contract': None, 'Player_contract': None, 'winning_pair': None, 'double/redouble': 0, 'Players hand': [[0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], [0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0], [1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1]]}
+
+LAST_contract: 3NT
+Pair: N/S E/W
+Score: 100 -100
+Optimum score: 420 -420
+
+NORTH_contract: None
+EAST_contract: None
+SOUTH_contract: None
+WEST_contract: 3NT
+
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 21, 'double/redouble': 0, 
+ 'Player_contract': 21, 'winning_pair': 1}
+Reward: [-320, 320]
+
+LAST_contract: 6NT
+Pair: N/S E/W
+Score: -300 300
+Optimum score: 420 -420
+
+NORTH_contract: 6NT
+EAST_contract: None
+SOUTH_contract: None
+WEST_contract: 3NT
+
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 6, 'double/redouble': 0, 
+ 'Player_contract': 6, 'winning_pair': 0}
+Reward: [-720, 720]
+
+LAST_contract: 7NT
+Pair: N/S E/W
+Score: 300 -300
+Optimum score: 420 -420
+
+NORTH_contract: 6NT
+EAST_contract: 7NT
+SOUTH_contract: None
+WEST_contract: 3NT
+
+Observation space:
+{'whose turn': 1, 'whose next turn': 2, 'LAST_contract': 1, 'double/redouble': 0, 
+ 'Player_contract': 1, 'winning_pair': 1}
+Reward: [-120, 120]
+
+LAST_contract: 7NT
+Pair: N/S E/W
+Score: 300 -300
+Optimum score: 420 -420
+
+NORTH_contract: 6NT
+EAST_contract: 7NT
+SOUTH_contract: pass
+WEST_contract: 3NT
+
+Observation space:
+{'whose turn': 2, 'whose next turn': 3, 'LAST_contract': 1, 'double/redouble': 0, 
+ 'Player_contract': 0, 'winning_pair': 1}
+Reward: [-120, 120]
+
+LAST_contract: 7NT
+Pair: N/S E/W
+Score: 300 -300
+Optimum score: 420 -420
+
+NORTH_contract: 6NT
+EAST_contract: 7NT
+SOUTH_contract: pass
+WEST_contract: pass
+
+Observation space:
+{'whose turn': 3, 'whose next turn': 0, 'LAST_contract': 1, 'double/redouble': 0, 
+ 'Player_contract': 0, 'winning_pair': 1}
+Reward: [-120, 120]
+
+LAST_contract: 7NT
+Pair: N/S E/W
+Score: 300 -300
+Optimum score: 420 -420
+
+NORTH_contract: pass
+EAST_contract: 7NT
+SOUTH_contract: pass
+WEST_contract: pass
+
+Observation space:
+{'whose turn': 0, 'whose next turn': 1, 'LAST_contract': 1, 'double/redouble': 0, 
+ 'Player_contract': 0, 'winning_pair': 1}
+Reward: [-120, 120]
+Episode 2 finished after 6 timesteps
+
+```
 
 Poniższy filmik ukazuje działanie kodu z poprzedniego punktu.
 
