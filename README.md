@@ -98,7 +98,7 @@ env.close()
 
 ## Działanie środowiska
 
-Poniżej przedstawiono wynik działania opisanego w poprzednim punkcie proframu dla jednego z epizodów i wersji konsolowej.
+Poniżej przedstawiono wynik działania opisanego w poprzednim punkcie programu dla jednego z epizodów i wersji konsolowej.
 ```
 Dealer: W 
 N hand:
@@ -218,6 +218,6 @@ Episode 2 finished after 6 timesteps
 
 ```
 
-Poniższy filmik ukazuje działanie środowiska dla tego samego rozdania. Wtedy `gym.make('BridgeAuction-v0')` umieszcza się przed pętlą.
+Poniższy filmik ukazuje działanie środowiska dla tego samego rozdania we wszytskich epizodach. Wtedy `gym.make('BridgeAuction-v0')` umieszcza się przed pętlą.
 
 [![Watch the video](https://i.imgur.com/UIgSQDV.jpg)](https://youtu.be/VSm32FQY6Bk)
