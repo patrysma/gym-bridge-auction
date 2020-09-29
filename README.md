@@ -32,13 +32,13 @@ python3 -m pip install gym
 sudo cp /home/patrycja/PycharmProjects/gym_bridge_auction/gym_bridge_auction/envs/solver/dds/src/libdds.so /usr/lib
 ```
 
-  - Następnie należy uruchomić narzędzie `ldconfig`, które zaktualizuje pamięć podręczną bibliotek dostępnych w standardowych katalogach systemowych.
+   - Następnie należy uruchomić narzędzie `ldconfig`, które zaktualizuje pamięć podręczną bibliotek dostępnych w standardowych katalogach systemowych.
 
 ```
 sudo ldconfig
 ```
 
-  - Teraz można sprawdzić, czy pamięć podręczna została zaktualizowana za pomocą następującej komendy. 
+   - Teraz można sprawdzić, czy pamięć podręczna została zaktualizowana za pomocą następującej komendy. 
 
 ```
 ldconfig -p|grep dds
