@@ -65,21 +65,26 @@ python3 -m pip install -e .
 Aby przetestować działanie środowiska z interfejsem konsolowym można użyć poniższego kodu. Do testów wykorzystujących wersję graficzną należy przy renderowaniu podać opcję `'human'`, czyli: `env.render('human')`. Poniższy kod przedstawia działanie środowiska dla losowych działań agentów bez implementacji żadnego systemu uczącego.
 
 ```python
-import gym
 import gym_bridge_auction
+import gym
 
-env = gym.make('BridgeAuction-v0')
+PLAYERS_NAMES = ['N', 'E', 'S', 'W']
 
 for i_episode in range(5):
+    env = gym.make('BridgeAuction-v0')
     observation = env.reset()
-    env.render('human')
+    hands = {}
+    for number, player in enumerate(PLAYERS_NAMES):
+        hands[player] = observation['Players hands'][number]
+
+    env.render('console')
     print('Observation space:')
     print(observation)
 
     for i in range(100):
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
-        env.render('human')
+        env.render('console')
         print('Observation space:')
         print(observation)
         print('Reward: ' + str(reward))
