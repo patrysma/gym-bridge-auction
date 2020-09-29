@@ -32,19 +32,19 @@ python3 -m pip install gym
 sudo cp /home/patrycja/PycharmProjects/gym_bridge_auction/gym_bridge_auction/envs/solver/dds/src/libdds.so /usr/lib
 ```
 
--- Następnie należy uruchomić narzędzie `ldconfig`, które zaktualizuje pamięć podręczną bibliotek dostępnych w standardowych katalogach systemowych.
+    - Następnie należy uruchomić narzędzie `ldconfig`, które zaktualizuje pamięć podręczną bibliotek dostępnych w standardowych katalogach systemowych.
 
 ```
 sudo ldconfig
 ```
 
--- Teraz można sprawdzić, czy pamięć podręczna została zaktualizowana za pomocą następującej komendy. 
+    - Teraz można sprawdzić, czy pamięć podręczna została zaktualizowana za pomocą następującej komendy. 
 
 ```
 ldconfig -p|grep dds
 ```
 
-Przedstawiony sposób instalacji biblioteki przez kopiowanie do standardowego katalogu jest najprostszy, ale istnieją też inne. Dodatkowo da się również definiować własne ścieżki poszukiwań plików bibliotek, zapisując je do pliku `/etc/ld.so.conf`.
+    Przedstawiony sposób instalacji biblioteki przez kopiowanie do standardowego katalogu jest najprostszy, ale istnieją też inne. Dodatkowo da się również definiować własne ścieżki poszukiwań plików bibliotek, zapisując je do pliku `/etc/ld.so.conf`.
 
 - Po pobraniu środowiska z repozytorium trzeba je zainstalować, aby możliwe było jego użycie. W tym celu należy przejść w terminalu do folderu `gym-bridge-auction`, gdzie umieszczono wszystkie pliki ze środowiskiem oraz służący do instalacji `setup.py` (nazwę folderu głównego ustawić na `gym-bridge-auction`, jeśli jest inna). Następnie dokonać instalacji w następujący sposób:
 
@@ -58,7 +58,7 @@ lub
 python3 -m pip install -e .
 ```
 
-Korzystając z drugiego sposobu oprócz środowiska zainstalują się niezbędne biblioteki  `pygame` , `cppyy` , `gym` i `numpy`.
+    Korzystając z drugiego sposobu oprócz środowiska zainstalują się niezbędne biblioteki  `pygame` , `cppyy` , `gym` i `numpy`.
 
 ## Przykładowy kod prezentujący działanie środowiska
 
