@@ -50,7 +50,7 @@ class AuctionEnv(gym.Env):
         
         Przestrzeń obserwacji:
             Typ: Dict - zawierający stany: 'whose turn', 'whose next turn', 'LAST_contract', 'Player_contract', 
-            'winning_pair', 'double/redouble', 'Players hand'.
+            'winning_pair', 'double/redouble', 'Players hands'.
             
             Stan 'whose turn' - oznacza który z graczy licytował w danym kroku:
                 Typ: Discrete(4)
@@ -66,11 +66,12 @@ class AuctionEnv(gym.Env):
                 
                  Oznaczenia liczb zgodne ze stanem 'whose turn'.
                  
-            Stan 'LAST_contract' -  oznacza najwyższy zgłoszony kontrakt po każdym z kroków, a po zakończeniu kontrakt ostateczny:
+            Stan 'LAST_contract' -  oznacza najwyższy zgłoszony kontrakt po każdym z kroków, a po zakończeniu kontrakt 
+            ostateczny:
                 Typ: Discrete(36)
                 
-                Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji (oprócz wartości 36 i 37, które w tym przypadku
-                nie występują).
+                Oznaczenia liczb są zgodne z tymi przyjętymi w przestrzeni akcji (oprócz wartości 36 i 37, które w tym 
+                przypadku nie występują).
                 
             Stan 'Player_contract' - oznacza odzywkę/zapowiedź gracza licytującego w danym kroku:
                 Typ: Discrete(38)
@@ -93,7 +94,7 @@ class AuctionEnv(gym.Env):
                 | 1 | double - 'X' |
                 | 2 | redouble - 'XX' |
                             
-            Stan 'Players hand' - oznacza reprezentację rąk graczy w formie 0/1:
+            Stan 'Players hands' - oznacza reprezentację rąk graczy w formie 0/1:
                 Typ: Tuple(MultiDiscrete, MultiDiscrete, MultiDiscrete, MultiDiscrete)
                 
                 Kolejność rąk graczy jest następująca: N, E, S, W.
@@ -107,16 +108,16 @@ class AuctionEnv(gym.Env):
         Nagroda:
             W każdym kroku wyznaczona jest nagroda wartościująca działania agentów.
             
-            Postać: Lista 2-elementowa, gdzie elementy to liczby całkowite z zakresu od -9280 do 9280.
+            Postać: Lista 2-elementowa, gdzie elementy to liczby całkowite z zakresu od -8520 do 8520.
             
             | Indeks | Nazwa pary |
             | 0 | N/S |
             | 1 | E/W |
             
-            Nagroda to różnica pomiędzy otrzymanym zapisem brydżowym pary wygrywającej licytację a optymalną dla niej wartością 
-            punktową (wynik z Double Dummy Solver), gdy wszyscy gracze licytują idealnie. Zapis brydżowy jest wyznaczony na podstawie 
-            zgłoszonego kontraktu i rezultatów z Double Dummy Solver dotyczących realizowalności obowiązującego zobowiązania, co do
-            ilości lew jakie może wziać dana para przy ustalonym kolorze atutowym.
+            Nagroda to różnica pomiędzy otrzymanym zapisem brydżowym pary wygrywającej licytację a optymalną dla niej 
+            wartością punktową (wynik z Double Dummy Solver), gdy wszyscy gracze licytują idealnie. Zapis brydżowy jest 
+            wyznaczony na podstawie zgłoszonego kontraktu i rezultatów z Double Dummy Solver dotyczących realizowalności 
+            obowiązującego zobowiązania, co do ilości lew jakie może wziąć dana para przy ustalonym kolorze atutowym.
             
             Nagroda dla pary, która przegrywa licytację jest wartością przeciwną nagrody pary wygrywającej.
             
@@ -124,7 +125,7 @@ class AuctionEnv(gym.Env):
             Po zresetowaniu środowiska do stanu początkowego ustalone zostają następujące stany przestrzeni obserwacji:
             - 'Players hands' - reprezentacja rąk graczy w formie 0/1 jest dostępna tylko po użyciu funkcji reset(),
             podczas kolejnych kroków epizodu przestaje być dostępna (należy ją od razu przypisać do innej zmiennej)
-            - 'pair score/optimum score' - tylko optymalne wartości puntowe dla par, zapis pozostaje nieustalony
+            - ’double/redouble’ - gdzie wstawiono liczbę 0, oznaczającą, że nie wystąpiła jeszcze kontra lub rekontra
             - 'whose next turn' - indeks rozdającego, który rozpoczyna licytację
             Pozostałe stany przestrzeni obserwacji pozostają niedefiniowane (wartość None).
             
@@ -170,11 +171,12 @@ class AuctionEnv(gym.Env):
         self._first_bind_pass = False  # czy pierwsza odzywka była pasem
         self._double = False  # czy była kontra
         self._redouble = False  # czy była rekontra
-        self._pass_number = 0  # licznik zgłoszonych pasów kolejno
+        self._pass_number = 0  # licznik zgłoszonych kolejno pasów
         self._score = [0, 0]  # zapis dla par w danym momencie licytacji
         # maksymalna odzywka według solvera dla gracza zgłaszającego najwyższy kontrakt w danym momencie licytacji
         self._max_contract = None
-        # maksymalna liczba lew według solvera, jaką może wziąć gracz zgłaszający najwyższy kontrakt w danym momencie licytacji
+        # maksymalna liczba lew według solvera, jaką może wziąć gracz zgłaszający najwyższy kontrakt w danym momencie 
+        # licytacji
         self._max_number_of_tricks = None
         self._reward = [None, None]  # nagroda dla par
 
@@ -195,11 +197,12 @@ class AuctionEnv(gym.Env):
         self.reset()
 
     def step(self, action):
-        """Przesuwa licytację o krok do gracza następnego w kolejności oraz wyznacza dostępną dla niego przestrzeń akcji.
+        """Przesuwa licytację o krok do gracza następnego w kolejności oraz wyznacza dostępną dla niego przestrzeń 
+        akcji.
         
         Parametr:
-            action (int) - działanie agenta (zgłoszona odzywka z dostępnej przestrzeni akcji), który zgodnie z ustaloną kolejnością 
-            powinien licytować
+            action (int) - działanie agenta (zgłoszona odzywka z dostępnej przestrzeni akcji), który zgodnie z ustaloną
+             kolejnością powinien licytować
             
         Zwraca:
             state, reward, done, info : tuple
@@ -214,7 +217,11 @@ class AuctionEnv(gym.Env):
                 
                     Wartość True oznacza koniec epizodu.
             
-                info (dict) - dodatkowe informacje dotyczące środowiska."""
+                info (dict) - dodatkowe informacje dotyczące środowiska
+                
+                Pierwsza z nich, czyli ’pair score’, oznacza zapis brydżowy w danym momencie licytacjidla par. 
+                Natomiast ’optimum score’ określa optymalną wartość zapisu według Double Dummy Solver dla każdej ze 
+                stron. Informacje te zapisano w listach, gdzie indeks 0 to dane dla pary N-S, a 1 - dla pary E-W."""
 
         # sprawdzenie czy wykonane działanie przez agenta jest możliwe
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
@@ -223,7 +230,7 @@ class AuctionEnv(gym.Env):
         state = self._get_game_state(action, False)
         self._reward = self._get_reward(state, action)
 
-        # dodanie do dodatkowych informacji, przydatnych do sprawdzania wyników, dotyczących zapisu oraz optymalnych
+        # dodanie dodatkowych informacji, przydatnych do sprawdzania wyników, dotyczących zapisu oraz optymalnych
         # punktów dla każdej z par
         self._info['pair score'] = np.array([self._score[0], self._score[1]])
         self._info['optimum score'] = np.array([self._optimum_contract_score[0], self._optimum_contract_score[1]])
@@ -458,7 +465,7 @@ class AuctionEnv(gym.Env):
                     self._players[player_index].win_auction = False
 
                 else:
-                    # działanie jest jakolkolwiek odzywką
+                    # działanie jest jakąlkolwiek odzywką
                     self._players[player_index].win_auction = True
 
             elif (action < self._last_contract.value or self._last_contract.value == 0) and action != 0:
@@ -523,7 +530,7 @@ class AuctionEnv(gym.Env):
                         state['winning_pair'] = 1
 
             if state['LAST_contract'] == 0:
-                # przypadek gdy na poczatku licytacji (lub w kolejnych dalszych krokach) zgłoszono pas
+                # przypadek gdy na początku licytacji (lub w kolejnych dalszych krokach) zgłoszono pas
                 # wtedy żadna z par nie wygrywa licytacji
                 state['winning_pair'] = None
 

@@ -53,7 +53,7 @@ std::vector <int> calcTricksAndScore(std::string pbnHands, int dealer)
         printf("DDS error: %s\n", line);
     }
 
-    result.push_back(pres.score); //dodanie liczba punktów dla pary N-S za optymalny kontrakt do wektora wyników
+    result.push_back(pres.score); //dodanie liczby punktów dla pary N-S za optymalny kontrakt do wektora wyników
 
     return result; //wektor wyników
 }
